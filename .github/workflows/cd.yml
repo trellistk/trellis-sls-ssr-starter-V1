@@ -1,0 +1,39 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  deploy:
+    name: Build and deploy master
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+    
+    - name: Install API Dependencies
+      run: npm i
+    
+    - name: Install Serverless dependencies
+      uses: serverless/github-action@master
+      with:
+        args: dynamodb install --conceal
+
+    - name: Package for prod
+      uses: serverless/github-action@master
+      with:
+        args: package --stage prod
+
+    - name: Deploy to prod
+      uses: serverless/github-action@master
+      with:
+        args: deploy --package .serverless --stage prod --force

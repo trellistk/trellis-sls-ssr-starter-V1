@@ -1,0 +1,182 @@
+service: NouriMeals-API
+
+# Reference: https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
+
+frameworkVersion: "2"
+enableLocalinstallationFallback: true
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+  - serverless-dotenv-plugin
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      migrate: true
+      inMemory: false
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-west-2
+  environment:
+    DYNAMODB_TABLE: "${self:service}-${opt:stage, self:provider.stage}"
+    EMAIL_VERIFICATION_SECRET: ${env:EMAIL_VERIFICATION_SECRET}
+    SENDINBLUE_KEY: ${env:SENDINBLUE_KEY}
+    DOMAIN: ${env:DOMAIN}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+    - Effect: "Allow"
+      Action:
+        - ssm:GetParameter
+      Resource:
+        - "arn:aws:ssm:us-west-2:274772592742:parameter/NouriServerless/jwtSecretKey/dev"
+    - Effect: "Allow"
+      Action:
+        - kms:Decrypt
+      Resource:
+        - "arn:aws:ssm:us-west-2:274772592742:key/alias/aws/smm"
+
+functions:
+  authorize:
+    handler: src/functions/authorize.authorize
+  signupPage:
+    handler: src/functions/signup-page.signupPage
+    events:
+      - http:
+          method: get
+          path: /signup
+  signUp:
+    handler: src/functions/signup.signup
+    events:
+      - http:
+          method: post
+          cors: true
+          path: /signup
+          request:
+            passThrough: NEVER
+            schema:
+              application/json: "${file(src/schema/create_family.json)}"
+  verifyEmail:
+    handler: src/functions/verify-email.verifyEmail
+    events:
+      - http:
+          method: get
+          path: /verify/{token}
+  loginPage:
+    handler: src/functions/login-page.loginPage
+    events:
+      - http:
+          method: get
+          path: /login
+  login:
+    handler: src/functions/login.login
+    events:
+      - http:
+          method: post
+          cors: true
+          path: /login
+          request:
+            passThrough: NEVER
+            schema:
+              application/json: "${file(src/schema/login.json)}"
+  logout:
+    handler: src/functions/logout.logout
+    events:
+      - http:
+          method: get
+          cors: true
+          path: /logout
+  familyPage:
+    handler: src/functions/family-page.familyPage
+    events:
+      - http:
+          method: get
+          path: /family
+          cors: true
+          authorizer: 
+            name: authorizer
+            resultTtlInSeconds: 300
+            type: request
+  family:
+    handler: src/functions/family.family
+    events:
+      - http:
+          method: post
+          cors: true
+          path: /family
+          authorizer: 
+            name: authorizer
+            resultTtlInSeconds: 300
+            type: request
+          request:
+            passThrough: NEVER
+            schema:
+              application/json: "${file(src/schema/update_family_details.json)}"
+  resetRequestPage:
+    handler: src/functions/reset-request-page.resetRequestPage
+    events:
+      - http:
+          method: get
+          path: /reset/request
+          cors: true
+  resetRequest:
+    handler: src/functions/reset-request.resetRequest
+    events:
+      - http:
+          method: post
+          path: /reset/request
+          request:
+            passThrough: NEVER
+            schema:
+              application/json: "${file(src/schema/reset_request.json)}"
+  resetPage:
+    handler: src/functions/reset-page.resetPage
+    events:
+      - http:
+          method: get
+          path: /reset/{token}
+  resetPassword:
+    handler: src/functions/reset-password.resetPassword
+    events:
+      - http:
+          method: post
+          path: /reset
+
+
+  authorizer:
+    handler: src/functions/authorize.authorize
+
+resources:
+  Resources:
+    nouriTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: "${self:provider.environment.DYNAMODB_TABLE}"
+        AttributeDefinitions:
+            - AttributeName: chapter
+              AttributeType: S
+            - AttributeName: docSort
+              AttributeType: S
+        KeySchema:
+            - AttributeName: chapter
+              KeyType: HASH
+            - AttributeName: docSort
+              KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

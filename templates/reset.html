@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nouri App: Reset Password</title>
+</head>
+<body>
+  <h1>Reset your password.</h1>
+  <form action="./reset" method="POST">
+    <input type="hidden" name="csrf_token" value="{{csrf_token}}"></input>
+    <input type="hidden" name="email" value="{{email}}"></input>
+    <input type="hidden" name="chapter" value="{{chapter}}"></input>
+    <input type="hidden" name="type" value="{{type}}"></input>
+    <input type="password1" name="password1">
+    <input type="password2" name="password2">
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>

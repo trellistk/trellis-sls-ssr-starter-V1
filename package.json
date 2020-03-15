@@ -1,0 +1,67 @@
+{
+  "name": "nouri-serverless",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "standard",
+    "lint:fix": "standard --fix",
+    "test:helpers": "tape 'src/tests/helpers/*.js'",
+    "test:local": "tape 'src/tests/local/*.js'",
+    "test:e2e": "tape 'src/tests/e2e/*.js'",
+    "deploy:dev": "sls package --stage dev && sls deploy --package .serverless --stage dev --force",
+    "start:local": "IS_OFFLINE=true sls offline start"
+  },
+  "standard": {
+    "ignore": [
+      "package-lock.json",
+      "node_modules"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nourimeals/nouri-serverless.git"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "npx standard --fix"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nourimeals/nouri-serverless/issues"
+  },
+  "homepage": "https://github.com/nourimeals/nouri-serverless#readme",
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "argon2": "^0.26.2",
+    "aws-sdk": "^2.948.0",
+    "bcryptjs": "^2.4.3",
+    "bufferutil": "^4.0.3",
+    "dotenv": "^8.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "serverless": "^2.52.0",
+    "sib-api-v3-sdk": "^8.2.1",
+    "simple-sls-ssr": "^1.0.2",
+    "utf-8-validate": "^5.0.5",
+    "validator": "^13.6.0"
+  },
+  "devDependencies": {
+    "husky": "^4.3.8",
+    "lint-staged": "^10.5.4",
+    "node-fetch": "^2.6.1",
+    "puppeteer": "^10.1.0",
+    "serverless-dotenv-plugin": "^3.9.0",
+    "serverless-dynamodb-local": "^0.2.40",
+    "serverless-offline": "^6.9.0",
+    "standard": "^14.3.4",
+    "tape": "^5.2.2"
+  }
+}
