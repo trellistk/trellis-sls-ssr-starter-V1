@@ -1,0 +1,247 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Exported by architect/package@1.2.7 on 2020-03-15T00:12:31.521Z
+Resources:
+  NouriServerless:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: staging
+      DefinitionBody:
+        openapi: 3.0.1
+        info:
+          title:
+            Ref: AWS::StackName
+        paths:
+          /message:
+            post:
+              responses:
+                '200':
+                  description: 200 response
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostMessage.Arn}/invocations
+                responses:
+                  default:
+                    statusCode: '200'
+                    contentHandling: CONVERT_TO_TEXT
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws_proxy
+          /:
+            get:
+              responses:
+                '200':
+                  description: 200 response
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetIndex.Arn}/invocations
+                responses:
+                  default:
+                    statusCode: '200'
+                    contentHandling: CONVERT_TO_TEXT
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws_proxy
+          /{proxy+}:
+            x-amazon-apigateway-any-method:
+              parameters:
+              - name: proxy
+                in: path
+                required: true
+                schema:
+                  type: string
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetIndex.Arn}/invocations
+                responses:
+                  default:
+                    statusCode: '200'
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                cacheNamespace: xlr8r
+                cacheKeyParameters:
+                - method.request.path.proxy
+                contentHandling: CONVERT_TO_TEXT
+                type: aws_proxy
+      EndpointConfiguration: REGIONAL
+      BinaryMediaTypes:
+      - '*~1*'
+      MinimumCompressionSize: 0
+  PostMessage:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      CodeUri: s3://nouri-serverless-cfn-deployments-2e8af/7d85ebe419cd00a9a528ce2509a5968d
+      Runtime: nodejs12.x
+      MemorySize: 1152
+      Timeout: 5
+      Environment:
+        Variables:
+          ARC_ROLE:
+            Ref: Role
+          ARC_CLOUDFORMATION:
+            Ref: AWS::StackName
+          ARC_APP_NAME: nouri-serverless
+          ARC_HTTP: aws_proxy
+          NODE_ENV: staging
+          SESSION_TABLE_NAME: jwe
+      Role:
+        Fn::Sub:
+        - arn:aws:iam::${AWS::AccountId}:role/${roleName}
+        - roleName:
+            Ref: Role
+      Events:
+        PostMessageEvent:
+          Type: Api
+          Properties:
+            Path: /message
+            Method: POST
+            RestApiId:
+              Ref: NouriServerless
+  GetIndex:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      CodeUri: s3://nouri-serverless-cfn-deployments-2e8af/b8860f083d3babe7264bd6535d6e0307
+      Runtime: nodejs12.x
+      MemorySize: 1152
+      Timeout: 5
+      Environment:
+        Variables:
+          ARC_ROLE:
+            Ref: Role
+          ARC_CLOUDFORMATION:
+            Ref: AWS::StackName
+          ARC_APP_NAME: nouri-serverless
+          ARC_HTTP: aws_proxy
+          NODE_ENV: staging
+          SESSION_TABLE_NAME: jwe
+      Role:
+        Fn::Sub:
+        - arn:aws:iam::${AWS::AccountId}:role/${roleName}
+        - roleName:
+            Ref: Role
+      Events:
+        GetIndexEvent:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId:
+              Ref: NouriServerless
+  InvokeProxyPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: GetIndex
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub:
+        - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${restApiId}/*/*
+        - restApiId:
+            Ref: NouriServerless
+  NouriTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+      - AttributeName: pkey
+        KeyType: HASH
+      - AttributeName: skey
+        KeyType: RANGE
+      AttributeDefinitions:
+      - AttributeName: pkey
+        AttributeType: S
+      - AttributeName: skey
+        AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: ArcGlobalPolicy
+        PolicyDocument:
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            - logs:DescribeLogStreams
+            Resource: arn:aws:logs:*:*:*
+      - PolicyName: ArcDynamoPolicy
+        PolicyDocument:
+          Statement:
+          - Effect: Allow
+            Action:
+            - dynamodb:BatchGetItem
+            - dynamodb:BatchWriteItem
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:UpdateItem
+            - dynamodb:GetRecords
+            - dynamodb:GetShardIterator
+            - dynamodb:DescribeStream
+            - dynamodb:ListStreams
+            Resource:
+            - Fn::Sub:
+              - arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}
+              - tablename:
+                  Ref: NouriTable
+            - Fn::Sub:
+              - arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}/*
+              - tablename:
+                  Ref: NouriTable
+            - Fn::Sub:
+              - arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}/stream/*
+              - tablename:
+                  Ref: NouriTable
+  NouriParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name:
+        Fn::Sub:
+        - /${AWS::StackName}/tables/${tablename}
+        - tablename: nouri
+      Value:
+        Ref: NouriTable
+  ParameterStorePolicy:
+    Type: AWS::IAM::Policy
+    DependsOn: Role
+    Properties:
+      PolicyName: ArcParameterStorePolicy
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Action: ssm:GetParametersByPath
+          Resource:
+            Fn::Sub:
+            - arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}
+            - {}
+      Roles:
+      - Ref: Role
+Outputs:
+  API:
+    Description: API Gateway
+    Value:
+      Fn::Sub:
+      - https://${restApiId}.execute-api.${AWS::Region}.amazonaws.com/staging
+      - restApiId:
+          Ref: NouriServerless
+  restApiId:
+    Description: HTTP restApiId
+    Value:
+      Ref: NouriServerless
