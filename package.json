@@ -1,0 +1,26 @@
+{
+  "name": "nouri-serverless",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nourimeals/nouri-serverless.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nourimeals/nouri-serverless/issues"
+  },
+  "homepage": "https://github.com/nourimeals/nouri-serverless#readme",
+  "dependencies": {
+    "@architect/architect": "^6.2.4",
+    "bufferutil": "^4.0.1",
+    "twilio": "^3.40.0",
+    "utf-8-validate": "^5.0.2"
+  }
+}
