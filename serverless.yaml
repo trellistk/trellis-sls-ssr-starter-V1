@@ -1,0 +1,59 @@
+service: NouriMeals-API
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+  - serverless-jest-plugin
+custom:
+  dynamodb:
+    userTable: ${self:service}-user-${self:provider.stage}
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+    migration:
+      dir: offline/migrations
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  environment:
+    DYNAMODB_TABLE: ${self:custom.dynamodb.userTable}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:PutItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+functions:
+  create:
+    handler: src/functions/createUser.createUser
+    events:
+      - http:
+          method: post
+          cors: true
+          path: /v1/user
+          request:
+            schema:
+              application/json: ${file(src/schema/create_user_request.json)}
+
+
+resources:
+  Resources:
+    userTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:custom.dynamodb.userTable}
+        AttributeDefinitions:
+          -
+            AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: pk
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
