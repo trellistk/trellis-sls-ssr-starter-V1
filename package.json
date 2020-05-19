@@ -20,7 +20,6 @@
   "dependencies": {
     "aws-sdk": "^2.677.0",
     "bufferutil": "^4.0.1",
-    "serverless": "^1.70.1",
     "serverless-dynamodb-local": "^0.2.39",
     "serverless-offline": "^6.1.5",
     "utf-8-validate": "^5.0.2"
