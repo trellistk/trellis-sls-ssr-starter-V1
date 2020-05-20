@@ -1,15 +1,15 @@
 {
   "Table": {
-      "TableName": "users",
+      "TableName": "Users",
       "KeySchema": [
           {
-              "AttributeName": "id",
+              "AttributeName": "username",
               "KeyType": "HASH"
           }
       ],
       "AttributeDefinitions": [
           {
-              "AttributeName": "id",
+              "AttributeName": "username",
               "AttributeType": "S"
           }
       ],

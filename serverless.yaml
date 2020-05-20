@@ -4,18 +4,24 @@ frameworkVersion: ">=1.1.0 <2.0.0"
 
 plugins:
   - serverless-dynamodb-local
-  - serverless-offline
   - serverless-jest-plugin
   - serverless-pseudo-parameters
+  - serverless-offline
 custom:
   dynamodb:
     userTable: ${self:service}-user-${self:provider.stage}
+    stages:
+      - dev
     start:
       port: 8000
-      inMemory: true
+      inMemory: false
       migrate: true
+      noStart: true
     migration:
       dir: offline/migrations
+  
+  serverless-offline:
+    httpPort: 8000
 
   jest:
     collectCoverage: true
@@ -54,10 +60,10 @@ resources:
         TableName: ${self:custom.dynamodb.userTable}
         AttributeDefinitions:
           -
-            AttributeName: pk
+            AttributeName: username
             AttributeType: S
         KeySchema:
           -
-            AttributeName: pk
+            AttributeName: username
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
