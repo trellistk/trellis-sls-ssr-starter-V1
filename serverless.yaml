@@ -6,6 +6,7 @@ plugins:
   - serverless-dynamodb-local
   - serverless-offline
   - serverless-jest-plugin
+  - serverless-pseudo-parameters
 custom:
   dynamodb:
     userTable: ${self:service}-user-${self:provider.stage}
@@ -15,6 +16,9 @@ custom:
       migrate: true
     migration:
       dir: offline/migrations
+
+  jest:
+    collectCoverage: true
 
 provider:
   name: aws
@@ -29,13 +33,13 @@ provider:
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 functions:
-  create:
+  createUser:
     handler: src/functions/createUser.createUser
     events:
       - http:
           method: post
           cors: true
-          path: /v1/user
+          path: /v1/users
           request:
             schema:
               application/json: ${file(src/schema/create_user_request.json)}
