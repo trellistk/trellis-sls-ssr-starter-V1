@@ -3,20 +3,17 @@ service: NouriMeals-API
 frameworkVersion: ">=1.1.0 <2.0.0"
 
 plugins:
-  - serverless-dynamodb-local
   - serverless-jest-plugin
-  - serverless-pseudo-parameters
+  - serverless-dynamodb-local
   - serverless-offline
 custom:
   dynamodb:
-    userTable: "${self:service}-user-${self:provider.stage}"
     stages:
       - dev
     start:
       port: 8000
-      inMemory: false
+      inMemory: true
       migrate: true
-      noStart: true
     migration:
       dir: offline/migrations
   
@@ -30,7 +27,8 @@ provider:
   name: aws
   runtime: nodejs12.x
   environment:
-    DYNAMODB_TABLE: "${self:custom.dynamodb.userTable}"
+    IS_OFFLINE: true
+    DYNAMODB_TABLE: "${self:service}-${opt:stage, self:provider.stage}"
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -57,7 +55,7 @@ resources:
       Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Retain
       Properties:
-        TableName: "${self:custom.dynamodb.userTable}"
+        TableName: "${self:provider.environment.DYNAMODB_TABLE}"
         AttributeDefinitions:
           -
             AttributeName: username
