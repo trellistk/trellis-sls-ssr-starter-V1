@@ -10,12 +10,12 @@
   "properties": {
     "username": {
       "type": "string",
-      "title": "Username",
+      "title": "username",
       "minLength": 3,
       "maxLength": 30
     },
     "password": {
-      "title": "Password",
+      "title": "password",
       "type": "string",
       "minLength": 7,
       "maxLength": 30
