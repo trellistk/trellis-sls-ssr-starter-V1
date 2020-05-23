@@ -1,8 +1,10 @@
 'use strict';
 
-module.exports.response = (statusCode, message) => {
+function response(statusCode, message){
   return {
     statusCode: statusCode,
     body: JSON.stringify(message)
   };
 }
+
+module.exports = response
