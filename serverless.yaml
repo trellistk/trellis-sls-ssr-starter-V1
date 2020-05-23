@@ -12,13 +12,8 @@ custom:
       - dev
     start:
       port: 8000
-      inMemory: true
       migrate: true
-    migration:
-      dir: offline/migrations
-  
-  serverless-offline:
-    httpPort: 8000
+      inMemory: true
 
   jest:
     collectCoverage: true
@@ -26,14 +21,20 @@ custom:
 provider:
   name: aws
   runtime: nodejs12.x
+  region: us-west-2
   environment:
     IS_OFFLINE: true
     DYNAMODB_TABLE: "${self:service}-${opt:stage, self:provider.stage}"
   iamRoleStatements:
-    - Effect: Allow
+    - Effect: "Allow"
       Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Scan
         - dynamodb:Query
+        - dynamodb:GetItem
         - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 functions:
@@ -52,16 +53,18 @@ functions:
 resources:
   Resources:
     userTable:
-      Type: 'AWS::DynamoDB::Table'
+      Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain
       Properties:
         TableName: "${self:provider.environment.DYNAMODB_TABLE}"
         AttributeDefinitions:
           -
-            AttributeName: username
-            AttributeType: S
+            AttributeName: "username"
+            AttributeType: "S"
         KeySchema:
           -
-            AttributeName: username
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
+            AttributeName: "username"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
