@@ -44,10 +44,38 @@ functions:
       - http:
           method: post
           cors: true
-          path: /v1/users
+          path: /users
           request:
             schema:
               application/json: "${file(src/schema/create_user_request.json)}"
+  getAllUsers:
+    handler: src/functions/getAllUsers.getAllUsers
+    events:
+      - http:
+          method: get
+          cors: true
+          path: /users
+  getUser:
+    handler: src/functions/getUser.getUser
+    events:
+      - http:
+          method: get
+          cors: true
+          path: /users/{id}
+  updateUser:
+    handler: src/functions/updateUser.updateUser
+    events:
+      - http:
+          method: put
+          cors: true
+          path: /users/{id}
+  deleteUser:
+    handler: src/functions/deleteUser.deleteUser
+    events:
+      - http:
+          method: delete
+          cors: true
+          path: /users/{id}
 
 
 resources:
