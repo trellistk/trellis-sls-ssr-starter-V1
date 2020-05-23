@@ -1,36 +1,32 @@
 'use strict';
 const AWS = require('aws-sdk');
 const bcrypt = require('bcryptjs');
-const dynamodb = require('./../../database/dynamodb')
+const { v4: uuidv4 } = require('uuid');
+const db = require('../../database/dynamodb');
 
-module.exports.createUser = async (event, context) => {
-  const body = JSON.parse(event.body)
-  const username = body.username
-  const password = body.password
+const usersTable = process.env.DYNAMODB_TABLE;
 
-  const newUserParams = {
-    TableName: process.env.DYNAMODB_USER_TABLE,
-    Item: {
-      username: username,
-      password: bcrypt.hashSync(password, 10)
+function response(statusCode, message) {
+  return {
+    statusCode: statusCode,
+    body: JSON.stringify(message)
+  };
+}
+
+module.exports.createUser = (event, context, callback) => {
+  const reqBody = JSON.parse(event.body)
+
+  const user = {
+      id: uuidv4(),
+      username: reqBody.username,
+      password: bcrypt.hashSync(reqBody.password, 10)
     }
-  }
 
-  try {
- // const dynamodb = new AWS.DynamoDB.DocumentClient()
-    const putResult = await dynamodb.put(newuserParams).promise()
-    return {
-      statusCode: 201,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
-        'Access-Control-Allow-Headers': 'Authorization'
-      }
-    }
-  } catch(putError) {
-    console.log('There was an error creating the new user')
-    console.log('putError', putError)
-    console.log('newUserParams', newUserParams)
-    return new Error('There was an error creating the new user')
-  }
+  return db.put({
+    TableName: usersTable,
+    Item: user
+  }).promise().then(() => {
+    callback(null, response(201, user))
+  })
+  .catch(err => response(err.statusCode, err));
 }

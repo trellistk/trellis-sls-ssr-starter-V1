@@ -21,13 +21,14 @@
     "aws-sdk": "^2.677.0",
     "bcryptjs": "^2.4.3",
     "bufferutil": "^4.0.1",
-    "utf-8-validate": "^5.0.2"
+    "utf-8-validate": "^5.0.2",
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
     "aws-sdk-mock": "^5.1.0",
     "jest": "^26.0.1",
     "serverless-dynamodb-local": "^0.2.39",
     "serverless-jest-plugin": "^0.3.0",
-    "serverless-offline": "^6.1.5"
+    "serverless-offline": "^6.1.7"
   }
 }
