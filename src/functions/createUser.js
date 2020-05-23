@@ -3,15 +3,9 @@ const AWS = require('aws-sdk');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../../database/dynamodb');
+const response = require('../../helpers/response');
 
 const usersTable = process.env.DYNAMODB_TABLE;
-
-function response(statusCode, message) {
-  return {
-    statusCode: statusCode,
-    body: JSON.stringify(message)
-  };
-}
 
 module.exports.createUser = (event, context, callback) => {
   const reqBody = JSON.parse(event.body)
