@@ -44,7 +44,7 @@ functions:
       - http:
           method: post
           cors: true
-          path: /users
+          path: /user
           request:
             schema:
               application/json: "${file(src/schema/create_user_request.json)}"
@@ -55,27 +55,34 @@ functions:
           method: get
           cors: true
           path: /users
+  getUsersPerCity:
+    handler: src/functions/getUsersPerCity.getUsersPerCity
+    events:
+      - http:
+          method: get
+          cors: true
+          path: /users/{city}
   getUser:
     handler: src/functions/getUser.getUser
     events:
       - http:
           method: get
           cors: true
-          path: /users/{id}
+          path: /user/{id}
   updateUser:
     handler: src/functions/updateUser.updateUser
     events:
       - http:
           method: put
           cors: true
-          path: /users/{id}
+          path: /user/{id}
   deleteUser:
     handler: src/functions/deleteUser.deleteUser
     events:
       - http:
           method: delete
           cors: true
-          path: /users/{id}
+          path: /user/{id}
 
 
 resources:
@@ -87,8 +94,8 @@ resources:
         TableName: "${self:provider.environment.DYNAMODB_TABLE}"
         AttributeDefinitions:
           -
-            AttributeName: "username"
-            AttributeType: "S"
+            AttributeName: "username"              #partition key = city
+            AttributeType: "S"                     #sort key = user email
         KeySchema:
           -
             AttributeName: "username"
