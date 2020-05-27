@@ -13,7 +13,8 @@ custom:
     start:
       port: 8000
       migrate: true
-      inMemory: true
+      inMemory: false
+      dbPath: "../nouri-serverless"
 
   jest:
     collectCoverage: true
@@ -61,28 +62,28 @@ functions:
       - http:
           method: get
           cors: true
-          path: /users/{city}
+          path: "/users/{city}"         
   getUser:
     handler: src/functions/getUser.getUser
     events:
       - http:
           method: get
           cors: true
-          path: /user/{id}
+          path: "/user/{id}"
   updateUser:
     handler: src/functions/updateUser.updateUser
     events:
       - http:
           method: put
           cors: true
-          path: /user/{id}
+          path: "/user/{id}"
   deleteUser:
     handler: src/functions/deleteUser.deleteUser
     events:
       - http:
           method: delete
           cors: true
-          path: /user/{id}
+          path: "/user/{id}"
 
 
 resources:
@@ -93,13 +94,15 @@ resources:
       Properties:
         TableName: "${self:provider.environment.DYNAMODB_TABLE}"
         AttributeDefinitions:
-          -
-            AttributeName: "username"              #partition key = city
-            AttributeType: "S"                     #sort key = user email
+            - AttributeName: "city"
+              AttributeType: "S"
+            - AttributeName: "username"
+              AttributeType: "S" 
         KeySchema:
-          -
-            AttributeName: "username"
-            KeyType: "HASH"
+            - AttributeName: "city"
+              KeyType: "HASH"
+            - AttributeName: "username"
+              KeyType: "RANGE"
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
