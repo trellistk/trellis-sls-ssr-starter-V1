@@ -13,7 +13,9 @@ module.exports.createUser = (event, context, callback) => {
   const user = {
       id: uuidv4(),
       username: reqBody.username,
-      password: bcrypt.hashSync(reqBody.password, 10)
+      password: bcrypt.hashSync(reqBody.password, 10),
+      city: reqBody.city,
+      deliveryDay: reqBody.deliveryDay
     }
 
   return db.put({
