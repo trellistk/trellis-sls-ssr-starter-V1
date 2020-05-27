@@ -146,6 +146,7 @@ dist/
 
 # DynamoDB Local files
 .dynamodb/
+shared-local-instance.db
 
 # Temporary folders
 tmp/
