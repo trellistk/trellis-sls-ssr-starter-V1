@@ -20,7 +20,8 @@ module.exports.createUser = (event, context, callback) => {
 
   return db.put({
     TableName: usersTable,
-    Item: user
+    Item: user,
+    ConditionExpression: 'attribute_not_exists(username) AND attribute_exists(city)'
   }).promise().then(() => {
     callback(null, response(201, user))
   })
