@@ -69,21 +69,21 @@ functions:
       - http:
           method: get
           cors: true
-          path: "/user/{id}"
+          path: "/user/{city}/{username}"
   updateUser:
     handler: src/functions/updateUser.updateUser
     events:
       - http:
           method: put
           cors: true
-          path: "/user/{id}"
+          path: "/user/{city}/{username}"
   deleteUser:
     handler: src/functions/deleteUser.deleteUser
     events:
       - http:
           method: delete
           cors: true
-          path: "/user/{id}"
+          path: "/user/{city}/{username}"
 
 
 resources:
