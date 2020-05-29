@@ -24,5 +24,5 @@ module.exports.createUser = (event, context, callback) => {
   }).promise().then(() => {
     callback(null, response(201, user))
   })
-  .catch(err => response(err.statusCode, err));
+  .catch(err => response(null, response(err.statusCode, err)));
 }

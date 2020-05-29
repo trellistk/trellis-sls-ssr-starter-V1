@@ -16,5 +16,5 @@ module.exports.getAllUsers = (event, context, callback) => {
     TableName: usersTable
   }).promise().then(res => {
     callback(null, response(200, res.Items.sort(sortByCity)))
-  }).catch(err => response(err.statusCode, err));
+  }).catch(err => response(null, response(err.statusCode, err)));
 }

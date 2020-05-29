@@ -17,5 +17,5 @@ module.exports.getUser = (event, context, callback) => {
   return db.get(params).promise().then(res => {
     if(res.Item) callback(null, response(200, res.Item))
     else callback(null, response(404, { error: 'User not found'}))
-  }).catch(err => response(err.statusCode, err));
+  }).catch(err => response(null, response(err.statusCode, err)));
 }
