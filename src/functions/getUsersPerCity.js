@@ -19,5 +19,5 @@ module.exports.getUsersPerCity = (event, context, callback) => {
   };
   return db.query(params).promise().then(res => {
     callback(null, response(200, res.Items))
-  }).catch(err => response(err.statusCode, err));
+  }).catch(err => response(null, response(err.statusCode, err)));
 }

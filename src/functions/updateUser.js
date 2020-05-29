@@ -28,5 +28,5 @@ module.exports.updateUser = (event, context, callback) => {
 
   return db.update(params).promise().then(res => {
     callback(null, response(200, res.Attributes))
-  }).catch(err => response(err.statusCode, err));
+  }).catch(err => response(null, response(err.statusCode, err)));
 }
