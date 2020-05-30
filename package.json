@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "sls invoke test"
+    "test": "tape 'src/tests/*.js'"
   },
   "repository": {
     "type": "git",
@@ -25,10 +25,10 @@
     "uuid": "^8.1.0"
   },
   "devDependencies": {
-    "aws-sdk-mock": "^5.1.0",
-    "jest": "^26.0.1",
+    "node-fetch": "^2.6.0",
     "serverless-dynamodb-local": "^0.2.39",
     "serverless-jest-plugin": "^0.3.0",
-    "serverless-offline": "^6.1.7"
+    "serverless-offline": "^6.1.7",
+    "tape": "^5.0.1"
   }
 }
