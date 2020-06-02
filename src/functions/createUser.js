@@ -3,27 +3,49 @@ const AWS = require('aws-sdk');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../../database/dynamodb');
-const response = require('../../helpers/response');
 
 const usersTable = process.env.DYNAMODB_TABLE;
 
-module.exports.createUser = (event, context, callback) => {
-  const reqBody = JSON.parse(event.body)
-
-  const user = {
-      id: uuidv4(),
-      username: reqBody.username,
-      password: bcrypt.hashSync(reqBody.password, 10),
-      city: reqBody.city,
-      deliveryDay: reqBody.deliveryDay
-    }
-
-  return db.put({
+// async function abstraction
+async function createItem(itemData) {
+  var params = {
     TableName: usersTable,
-    Item: user,
-    ConditionExpression: 'attribute_not_exists(username) AND attribute_exists(city)'
-  }).promise().then(() => {
-    callback(null, response(201, user))
-  })
-  .catch(err => response(null, response(err.statusCode, err)));
+    Item: itemData,
+    ConditionExpression: 'attribute_not_exists(username)'
+  }
+  try {
+    await db.put(params).promise()
+  } catch (err) {
+    return err
+  }
+}
+
+// usage
+exports.createUser = async (event, context) => {
+  try {
+    const data = JSON.parse(event.body)
+
+    const user = {
+        id: uuidv4(),
+        username: data.username,
+        password: bcrypt.hashSync(data.password, 10),
+        city: data.city,
+        deliveryDay: data.deliveryDay
+      }
+    const response = await createItem(user)
+    console.log(response)
+    if (response) {
+      return { 
+        statusCode: response.statusCode,
+        body: JSON.stringify(response)
+      }
+    } else {
+      return {
+        statusCode: 201,
+        body: JSON.stringify(user)
+      }
+    }
+  } catch (err) {
+        return { error: err }
+    }
 }
