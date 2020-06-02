@@ -33,7 +33,6 @@ exports.createUser = async (event, context) => {
         deliveryDay: data.deliveryDay
       }
     const response = await createItem(user)
-    console.log(response)
     if (response) {
       return { 
         statusCode: response.statusCode,
