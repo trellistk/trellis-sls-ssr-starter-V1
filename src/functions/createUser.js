@@ -21,7 +21,7 @@ async function createItem(itemData) {
 }
 
 // usage
-exports.createUser = async (event, context) => {
+module.exports.createUser = async (event, context) => {
   try {
     const data = JSON.parse(event.body)
 

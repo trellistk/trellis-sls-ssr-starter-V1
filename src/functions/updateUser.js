@@ -27,10 +27,9 @@ async function updateItem(city, username, deliveryDay) {
 }
 
 // usage
-exports.updateUser = async (event, context) => {
+module.exports.updateUser = async (event, context) => {
   try {
     const { city, username, deliveryDay } = JSON.parse(event.body);
-
     const response = await updateItem(city, username, deliveryDay)
     if (response) {
       return { 
