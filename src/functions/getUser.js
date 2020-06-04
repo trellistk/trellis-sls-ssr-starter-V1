@@ -1,21 +1,35 @@
 'use strict';
 const AWS = require('aws-sdk');
 const db = require('../../database/dynamodb');
-const response = require('../../helpers/response');
 
 const usersTable = process.env.DYNAMODB_TABLE;
 
-module.exports.getUser = (event, context, callback) => {
-  const { city, username } = event.pathParameters;     // Change with Slack Integration?
+// async function abstraction
+async function getItem(city, username) {
   const params = {
     TableName: usersTable,
     Key: {
-      city: city,
-      username: username
+      city,
+      username
     }
   };
-  return db.get(params).promise().then(res => {
-    if(res.Item) callback(null, response(200, res.Item))
-    else callback(null, response(404, { error: 'User not found'}))
-  }).catch(err => response(null, response(err.statusCode, err)));
+  try {
+    const data = await db.get(params).promise();
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+// usage
+module.exports.getUser = async (event, context) => {
+  try {
+    const { city, username } = JSON.parse(event.body);
+    console.log('city = ' + city + ' and ' + 'username = ' + username);
+    const response = await getItem(city, username);
+    console.log('response = ' + response);
+    return JSON.stringify(response);
+  } catch (err) {
+    return { body: err };
+  }  
 }
