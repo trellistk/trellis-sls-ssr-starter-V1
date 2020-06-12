@@ -45,15 +45,15 @@ Here is a JSON representation of User.
 | **phone** | String | The user's phone number. | Yes |
 | **verifiedEmail** | Boolean | User's email has been verified or not. | No |
 | **familyMembers** | Object | A collection of properties that define the members of the user's family. | No |
-| + | **member** | Object | An individual member of the user's family. | No |
-| ++ | **child** | Boolean | Is this member a child. | No |
+| +  **member** | Object | An individual member of the user's family. | No |
+| + +  **child** | Boolean | Is this member a child. | No |
 | **address** | Object | A collection of properties that define the user's physical address. | Yes |
-| + | **street** | String | The street of the user's address. | Yes |
-| + | **street2** | String | Additional street info of the user's address. | No |
-| + | **aptSte** | String | The apartment or suite of the user's address. | No |
-| + | **city** | String | The city of the user's address. | Yes |
-| + | **state** | String | The state of the user's address. | Yes |
-| + | **zip** | Number | The zipcode of the user's address. | Yes |
+| +  **street** | String | The street of the user's address. | Yes |
+| +  **street2** | String | Additional street info of the user's address. | No |
+| +  **aptSte** | String | The apartment or suite of the user's address. | No |
+| +  **city** | String | The city of the user's address. | Yes |
+| +  **state** | String | The state of the user's address. | Yes |
+| +  **zip** | Number | The zipcode of the user's address. | Yes |
 | **dietaryRestrictions** | String | Any dietary restrictions in the family that we should be aware of. | No |
 | **specialNotes** | String | Information the user thinks we should be aware of. | No |
 | **deliveryDay** | String | Day the user wants meals to be delivered on. | Yes |
