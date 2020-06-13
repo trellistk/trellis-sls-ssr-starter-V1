@@ -15,9 +15,6 @@ custom:
       inMemory: false
       dbPath: "../nouri-serverless"
 
-  jest:
-    collectCoverage: true
-
 provider:
   name: aws
   runtime: nodejs12.x
