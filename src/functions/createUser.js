@@ -1,6 +1,6 @@
 'use strict';
 const AWS = require('aws-sdk');
-const bcrypt = require('bcryptjs');
+const argon2 = require('argon2');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../../database/dynamodb');
 
@@ -24,11 +24,17 @@ async function createItem(itemData) {
 module.exports.createUser = async (event, context) => {
   try {
     const data = JSON.parse(event.body)
+    const hash = await argon2.hash(data.password, {
+      type:argon2.argon2id,
+      memoryCost: 2 ** 19,
+      timeCost: 8,
+      parallelism: 8
+    })
 
     const user = {
         id: uuidv4(),
         username: data.username,
-        password: bcrypt.hashSync(data.password, 10),
+        password: hash,
         city: data.city,
         deliveryDay: data.deliveryDay
       }
