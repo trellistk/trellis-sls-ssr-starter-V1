@@ -22,6 +22,8 @@ async function createItem(itemData) {
 
 // usage
 module.exports.createUser = async (event, context) => {
+  console.log('IS OFFLINE?', process.env.IS_OFFLINE)
+  console.info('START_CREATING_NEW_USER')
   try {
     const data = JSON.parse(event.body)
     const hash = await argon2.hash(data.password, {
@@ -51,6 +53,7 @@ module.exports.createUser = async (event, context) => {
       }
     }
   } catch (err) {
+    console.error('ERROR_CREATING_NEW_USER', err)
         return { error: err }
     }
 }

@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "tape 'src/tests/*.js'"
+    "test": "tape 'src/tests/*.js'",
+    "deploy:dev": "sls deploy",
+    "start:local": "IS_OFFLINE=true sls offline start"
   },
   "repository": {
     "type": "git",
@@ -21,7 +23,6 @@
     "@hapi/joi": "^17.1.1",
     "argon2": "^0.26.2",
     "aws-sdk": "^2.677.0",
-    "bcryptjs": "^2.4.3",
     "bufferutil": "^4.0.1",
     "serverless": "^1.72.0",
     "utf-8-validate": "^5.0.2",
