@@ -20,7 +20,6 @@ provider:
   runtime: nodejs12.x
   region: us-west-2
   environment:
-    IS_OFFLINE: true
     DYNAMODB_TABLE: "${self:service}-${opt:stage, self:provider.stage}"
   iamRoleStatements:
     - Effect: "Allow"
