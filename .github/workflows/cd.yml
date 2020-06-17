@@ -11,10 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: npm i
-      uses: actions/npm@master
-      with:
-        args: install
+    - run: npm ci
     - name: sls deploy
       uses: serverless/github-action@master
       with:
