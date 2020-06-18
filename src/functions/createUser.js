@@ -7,18 +7,18 @@ const { httpResponse } = require('../../helpers/response')
 const { createItem } = require('../../helpers/db')
 
 // async function abstraction
-async function createItem(itemData) {
-  var params = {
-    TableName: usersTable,
-    Item: itemData,
-    ConditionExpression: 'attribute_not_exists(username)'
-  }
-  try {
-    await db.put(params).promise()
-  } catch (err) {
-    return err
-  }
-}
+// async function createItem(itemData) {
+//   var params = {
+//     TableName: usersTable,
+//     Item: itemData,
+//     ConditionExpression: 'attribute_not_exists(username)'
+//   }
+//   try {
+//     await db.put(params).promise()
+//   } catch (err) {
+//     return err
+//   }
+// }
 
 // usage
 module.exports.createUser = async (event, context) => {
