@@ -42,7 +42,7 @@ module.exports.createUser = async (event, context) => {
     const user = {
         id: uuidv4(),
         username: data.username,
-        password: bcrypt.hash(data.password, 10),
+        password: bcrypt.hashSync(data.password, 10),
         city: data.city,
         deliveryDay: data.deliveryDay
       }
