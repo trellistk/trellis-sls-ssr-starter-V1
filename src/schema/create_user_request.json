@@ -5,7 +5,9 @@
   "title": "Create User Schema",
   "required": [
     "username",
-    "password"
+    "password",
+    "city",
+    "state"
   ],
   "properties": {
     "username": {
@@ -22,13 +24,17 @@
     },
     "city": {
       "title": "city",
+      "type": "string"
+    },
+    "state": {
+      "title": "password",
       "type": "string",
-      "default": ""
+      "minLength": 2,
+      "maxLength": 2
     },
     "deliveryDay": {
       "title": "deliveryDay",
-      "type": "string",
-      "default": ""
+      "type": "string"
     }
   }
 }
