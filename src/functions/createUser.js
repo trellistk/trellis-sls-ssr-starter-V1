@@ -27,12 +27,13 @@ module.exports.createUser = async (event, context) => {
 
     console.info('STEP_BUILT_USER_DATE', user)
     
-    const { dbData, err: dbErr } = await createItem(user)
+    const { data: dbData, err: dbErr } = await createItem(user)
     if (dbErr) {
       console.error('ERROR_CREATING_USER', dbErr)
       return httpResponse(400, { error: dbErr })
     }
 
+    console.error('STEP_CREATED_USER', dbData)
     return httpResponse(201, dbData)
   
   } catch (err) {
