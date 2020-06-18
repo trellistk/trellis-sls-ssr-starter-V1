@@ -5,7 +5,6 @@ const db = require('../database/dynamodb')
 const usersTable = process.env.DYNAMODB_TABLE
 
 module.exports.createItem = async (data) => {
-  console.info('STARTING_DB_CREATE_ITEM')
   var params = {
     TableName: usersTable,
     Item: data,
@@ -13,7 +12,6 @@ module.exports.createItem = async (data) => {
   }
   try {
     const response = await db.put(params).promise()
-    console.log('dbResponse', response)
     return { data: response }
   } catch (error) {
     return { error }
