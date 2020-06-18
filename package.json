@@ -25,7 +25,7 @@
     "aws-sdk": "^2.677.0",
     "bcryptjs": "^2.4.3",
     "bufferutil": "^4.0.1",
-    "serverless": "^1.72.0",
+    "serverless": "^1.73.1",
     "utf-8-validate": "^5.0.2",
     "uuid": "^8.1.0"
   },

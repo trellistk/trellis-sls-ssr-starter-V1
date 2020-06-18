@@ -1,10 +1,8 @@
 'use strict';
 
-function response(statusCode, message){
+module.exports.httpResponse = (statusCode, message)=> {
   return {
     statusCode: statusCode,
     body: JSON.stringify(message)
   };
 }
-
-module.exports = response

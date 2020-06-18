@@ -5,6 +5,8 @@ const { v4: uuidv4 } = require('uuid');
 const db = require('../../database/dynamodb');
 const bcrypt = require('bcryptjs');
 
+const { httpResponse } = require('../../helpers/response')
+
 const usersTable = process.env.DYNAMODB_TABLE;
 
 // async function abstraction
@@ -40,28 +42,31 @@ module.exports.createUser = async (event, context) => {
     // console.info('STEP_HASH', hash)
 
     const user = {
-        id: uuidv4(),
-        username: data.username,
-        password: bcrypt.hashSync(data.password, 10),
-        city: data.city,
-        deliveryDay: data.deliveryDay
-      }
+      id: uuidv4(),
+      username: data.username,
+      password: bcrypt.hashSync(data.password, 10),
+      city: data.city,
+      deliveryDay: data.deliveryDay
+    }
     console.info('STEP_BUILT USER DATE', user)
     const response = await createItem(user)
     console.info('STEP_CREATED_ITEM', response)
     if (response) {
-      return { 
-        statusCode: response.statusCode,
-        body: JSON.stringify(response)
-      }
+      return httpResponse(200, response)
+      // return { 
+      //   statusCode: response.statusCode,
+      //   body: JSON.stringify(response)
+      // }
     } else {
-      return {
-        statusCode: 201,
-        body: JSON.stringify(user)
-      }
+      return httpResponse(201, user)
+      // return {
+      //   statusCode: 201,
+      //   body: JSON.stringify(user)
+      // }
     }
   } catch (err) {
     console.error('ERROR_CREATING_NEW_USER', err)
-        return { error: err }
-    }
+    // return { error: err }
+    return httpResponse(400, { error: err })
+  }
 }
