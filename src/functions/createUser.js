@@ -33,6 +33,8 @@ module.exports.createUser = async (event, context) => {
       memoryCost: 2 ** 19,
       timeCost: 8,
       parallelism: 8
+    }).catch(err => {
+      console.error('Error with Argon2 hasing', err)
     })
     console.info('STEP_HASH', hash)
 

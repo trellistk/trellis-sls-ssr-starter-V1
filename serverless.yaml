@@ -33,6 +33,10 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
+package:
+  include:
+  - src/node_modules/argon2/**
+
 functions:
   createUser:
     handler: src/functions/createUser.createUser
