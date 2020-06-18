@@ -6,20 +6,6 @@ const bcrypt = require('bcryptjs')
 const { httpResponse } = require('../../helpers/response')
 const { createItem } = require('../../helpers/db')
 
-// async function abstraction
-// async function createItem(itemData) {
-//   var params = {
-//     TableName: usersTable,
-//     Item: itemData,
-//     ConditionExpression: 'attribute_not_exists(username)'
-//   }
-//   try {
-//     await db.put(params).promise()
-//   } catch (err) {
-//     return err
-//   }
-// }
-
 // usage
 module.exports.createUser = async (event, context) => {
   console.log('IS OFFLINE?', process.env.IS_OFFLINE)
@@ -41,13 +27,13 @@ module.exports.createUser = async (event, context) => {
 
     console.info('STEP_BUILT_USER_DATE', user)
     
-    const { data, err: dbErr } = await createItem(user)
+    const { dbData, err: dbErr } = await createItem(user)
     if (dbErr) {
       console.error('ERROR_CREATING_USER', dbErr)
       return httpResponse(400, { error: dbErr })
     }
 
-    return httpResponse(201, response)
+    return httpResponse(201, dbData)
   
   } catch (err) {
     console.error('ERROR_CREATING_NEW_USER', err)
