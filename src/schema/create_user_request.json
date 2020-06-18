@@ -19,6 +19,16 @@
       "type": "string",
       "minLength": 7,
       "maxLength": 30
+    },
+    "city": {
+      "title": "city",
+      "type": "string",
+      "default": ""
+    },
+    "deliveryDay": {
+      "title": "deliveryDay",
+      "type": "string",
+      "default": ""
     }
   }
 }
