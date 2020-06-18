@@ -25,13 +25,16 @@ module.exports.createUser = async (event, context) => {
   console.log('IS OFFLINE?', process.env.IS_OFFLINE)
   console.info('START_CREATING_NEW_USER')
   try {
+    console.info('STEP_GETTING_EVENT_BODY', event.body)
     const data = JSON.parse(event.body)
+    console.info('STEP_PARSED_EVENT_BODY', data)
     const hash = await argon2.hash(data.password, {
       type:argon2.argon2id,
       memoryCost: 2 ** 19,
       timeCost: 8,
       parallelism: 8
     })
+    console.info('STEP_HASH', hash)
 
     const user = {
         id: uuidv4(),
@@ -40,7 +43,9 @@ module.exports.createUser = async (event, context) => {
         city: data.city,
         deliveryDay: data.deliveryDay
       }
+    console.info('STEP_BUILT USER DATE', user)
     const response = await createItem(user)
+    console.info('STEP_CREATED_ITEM', response)
     if (response) {
       return { 
         statusCode: response.statusCode,
