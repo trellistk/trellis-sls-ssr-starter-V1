@@ -15,8 +15,6 @@ module.exports.createUser = async (event, context) => {
   logInfo('START_CREATING_NEW_USER')
 
   try {
-    logInfo('STEP_GETTING_EVENT_BODY', event.body)
-  
     const data = JSON.parse(event.body)
     logInfo('STEP_PARSED_EVENT_BODY', data)
 
