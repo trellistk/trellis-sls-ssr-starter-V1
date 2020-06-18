@@ -1,8 +1,9 @@
 'use strict';
 const AWS = require('aws-sdk');
-const argon2 = require('argon2');
+//const argon2 = require('argon2');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../../database/dynamodb');
+const bcrypt = require('bcryptjs');
 
 const usersTable = process.env.DYNAMODB_TABLE;
 
@@ -28,20 +29,20 @@ module.exports.createUser = async (event, context) => {
     console.info('STEP_GETTING_EVENT_BODY', event.body)
     const data = JSON.parse(event.body)
     console.info('STEP_PARSED_EVENT_BODY', data)
-    const hash = await argon2.hash(data.password, {
-      type:argon2.argon2id,
-      memoryCost: 2 ** 19,
-      timeCost: 8,
-      parallelism: 8
-    }).catch(err => {
-      console.error('Error with Argon2 hasing', err)
-    })
-    console.info('STEP_HASH', hash)
+    // const hash = await argon2.hash(data.password, {
+    //   type:argon2.argon2id,
+    //   memoryCost: 2 ** 19,
+    //   timeCost: 8,
+    //   parallelism: 8
+    // }).catch(err => {
+    //   console.error('Error with Argon2 hasing', err)
+    // })
+    // console.info('STEP_HASH', hash)
 
     const user = {
         id: uuidv4(),
         username: data.username,
-        password: hash,
+        password: bcrypt.hash(data.password, 10),
         city: data.city,
         deliveryDay: data.deliveryDay
       }
