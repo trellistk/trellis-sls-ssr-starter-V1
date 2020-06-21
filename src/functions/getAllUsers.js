@@ -1,20 +1,14 @@
-'use strict';
-const AWS = require('aws-sdk');
-const db = require('../../database/dynamodb');
-const response = require('../../helpers/response');
+'use strict'
+const AWS = require('aws-sdk')
+const db = require('../../database/dynamodb')
+const { httpResponse } = require('../../helpers/response')
 
-const usersTable = process.env.DYNAMODB_TABLE;
-
-function sortByCity(a,b){
-  if(a.city > b.city){          // Adjust once user data is pulled in from old API
-    return -1;
-  } else return 1;
-}
+const usersTable = process.env.DYNAMODB_TABLE
 
 module.exports.getAllUsers = (event, context, callback) => {
   return db.scan({
     TableName: usersTable
   }).promise().then(res => {
-    callback(null, response(200, res.Items.sort(sortByCity)))
-  }).catch(err => response(null, response(err.statusCode, err)));
+    callback(null, httpResponse(200, res.Items))
+  }).catch(err => httpResponse(null, httpResponse(err.statusCode, err)))
 }

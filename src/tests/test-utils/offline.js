@@ -6,7 +6,7 @@ let child
 
 module.exports.start = async () => {
   const createProcess = (resolve, reject) => {
-    child = spawn( 'sls', ['offline', 'start'])
+    child = spawn('sls', ['offline', 'start'])
 
     console.info(`Starting Offline. PID: ${child.pid}`)
 

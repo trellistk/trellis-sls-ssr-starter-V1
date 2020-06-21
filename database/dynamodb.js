@@ -1,16 +1,16 @@
-'use strict';
+'use strict'
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 
-let options = {};
+let options = {}
 
 if (process.env.IS_OFFLINE) {
   options = {
     region: 'localhost',
-    endpoint: 'http://localhost:8000',
-  };
+    endpoint: 'http://localhost:8000'
+  }
 }
 
-const client = new AWS.DynamoDB.DocumentClient(options);
+const client = new AWS.DynamoDB.DocumentClient(options)
 
-module.exports = client;
+module.exports = client

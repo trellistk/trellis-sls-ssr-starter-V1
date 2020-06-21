@@ -1,35 +1,30 @@
-'use strict';
-const AWS = require('aws-sdk');
-const db = require('../../database/dynamodb');
+'use strict'
 
-const usersTable = process.env.DYNAMODB_TABLE;
+const { httpResponse } = require('../../helpers/response')
+const { getChapterDocument } = require('../../helpers/db')
+const logger = require('../../helpers/logger')
 
-// async function abstraction
-async function getItem(city, username) {
-  const params = {
-    TableName: usersTable,
-    Key: {
-      city,
-      username
-    }
-  };
-  try {
-    const data = await db.get(params).promise();
-    return data;
-  } catch (err) {
-    return err;
-  }
-}
-
-// usage
 module.exports.getUser = async (event, context) => {
+  const { logInfo, logError, logAdd } = logger({
+    sequence: 'SEQUENCE_RETRIEVE_USER'
+  })
   try {
-    const { city, username } = JSON.parse(event.body);
-    console.log('city = ' + city + ' and ' + 'username = ' + username);
-    const response = await getItem(city, username);
-    console.log('response = ' + response);
-    return JSON.stringify(response);
-  } catch (err) {
-    return { body: err };
-  }  
+    logInfo('STEP_CHECK_AUTHORIZER', event.requestContext.authorizer)
+    const chapterState = event.requestContext.authorizer.principalId
+    const userDocument = event.requestContext.authorizer.claims.username
+    logInfo('STEP_SET_KEYS', { chapterState, userDocument })
+
+    const { Item: user, error: dbError } = await getChapterDocument(chapterState, userDocument)
+    logInfo('STEP_GET_USER_COMPLETE', user)
+
+    if (dbError) {
+      logError('STEP_GET_USER_ERROR', dbError)
+      return httpResponse(500, dbError)
+    };
+    logInfo('STEP_USER_RESPONSE')
+    return httpResponse(200, user.profile)
+  } catch (error) {
+    logError('STEP_GET_USER_ERROR', error)
+    return { error }
+  };
 }

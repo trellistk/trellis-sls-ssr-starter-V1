@@ -31,23 +31,36 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
-
-# package:
-#   include:
-#   - src/node_modules/argon2/**
+      Resource:
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+    - Effect: "Allow"
+      Action:
+        - ssm:GetParameter
+      Resource:
+        - "arn:aws:ssm:us-west-2:274772592742:parameter/NouriServerless/jwtSecretKey/dev"
+    - Effect: "Allow"
+      Action:
+        - kms:Decrypt
+      Resource:
+        - "arn:aws:ssm:us-west-2:274772592742:key/alias/aws/smm"
 
 functions:
+  authorize:
+    handler: src/functions/authorize.authorize
   createUser:
-    handler: src/functions/createUser.createUser
+    handler: src/functions/signUp.signUp
     events:
       - http:
           method: post
           cors: true
-          path: /user
-          request:
-            schema:
-              application/json: "${file(src/schema/create_user_request.json)}"
+          path: /signup
+  login:
+    handler: src/functions/login.login
+    events:
+      - http:
+          method: post
+          cors: true
+          path: /login
   getAllUsers:
     handler: src/functions/getAllUsers.getAllUsers
     events:
@@ -55,34 +68,31 @@ functions:
           method: get
           cors: true
           path: /users
-  getUsersPerCity:
-    handler: src/functions/getUsersPerCity.getUsersPerCity
-    events:
-      - http:
-          method: get
-          cors: true
-          path: "/users/{city}"         
+          authorizer: authorize        
   getUser:
     handler: src/functions/getUser.getUser
     events:
       - http:
           method: get
           cors: true
-          path: "/user"
+          path: /user
+          authorizer: authorize 
   updateUser:
     handler: src/functions/updateUser.updateUser
     events:
       - http:
           method: put
           cors: true
-          path: "/user"
+          path: /user
+          authorizer: authorize 
   deleteUser:
     handler: src/functions/deleteUser.deleteUser
     events:
       - http:
           method: delete
           cors: true
-          path: "/user"
+          path: /user
+          authorizer: authorize 
 
 
 resources:
@@ -93,14 +103,14 @@ resources:
       Properties:
         TableName: "${self:provider.environment.DYNAMODB_TABLE}"
         AttributeDefinitions:
-            - AttributeName: "city"
+            - AttributeName: "chapterState"
               AttributeType: "S"
-            - AttributeName: "username"
+            - AttributeName: "chapterDocument"
               AttributeType: "S" 
         KeySchema:
-            - AttributeName: "city"
+            - AttributeName: "chapterState"
               KeyType: "HASH"
-            - AttributeName: "username"
+            - AttributeName: "chapterDocument"
               KeyType: "RANGE"
         ProvisionedThroughput:
           ReadCapacityUnits: 1

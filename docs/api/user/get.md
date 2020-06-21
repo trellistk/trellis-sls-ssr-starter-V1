@@ -27,18 +27,20 @@ Once a user logs in and is authenticated, they can access their user information
   "phone": "123-456-7890",
   "verifiedEmail": true,
   "familyMembers": {
-    "George": {
+    "person": {
+      "fname": "George",
       "child": false
     },
-    "Jade": {
+    "person": {
+      "fname": "Jade",
       "child": true
     }
   },
   "address": {
     "street": "12345 N Awesome St",
-    "AptSte": "Apt 1354",
+    "aptSte": "Apt 1354",
     "city": "Seattle",
-    "state": "Washington",
+    "states": "Washington",
     "zip": 12345
   },
   "dietaryRestrictions": "My child has an allergy to bananas.",

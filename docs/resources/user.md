@@ -11,20 +11,22 @@ Here is a JSON representation of User.
 {
   "fName": "string",
   "lName": "string",
+  "username": "string",
   "email": "string",
   "password": "string",
   "phone": "string",
   "verifiedEmail": "boolean",
   "familyMembers": {
-    "member": {
+    "person": {
+      "fname": "string",
       "child": "boolean"
     }
   },
   "address": {
     "street": "string",
-    "AptSte": "string",
+    "aptSte": "string",
     "city": "string",
-    "state": "string",
+    "states": "string",
     "zip": "number"
   },
   "dietaryRestrictions": "string",
@@ -40,12 +42,14 @@ Here is a JSON representation of User.
 |:---------|:-----|:------------|:----------|
 | **fName**   | String | First name of the user. | Yes |
 | **lName** | String | Last name of the user. | Yes |
+| **username** | String | The user's username. | Yes |
 | **email** | String | The user's email address. | Yes |
 | **password** | String | The user's password. | Yes |
 | **phone** | String | The user's phone number. | Yes |
 | **verifiedEmail** | Boolean | User's email has been verified or not. | No |
 | **familyMembers** | Object | A collection of properties that define the members of the user's family. | No |
-| +  **member** | Object | An individual member of the user's family. | No |
+| +  **person** | Object | An individual member of the user's family. | No |
+| + +  **fname** | String | Member's first name. | No |
 | + +  **child** | Boolean | Is this member a child. | No |
 | **address** | Object | A collection of properties that define the user's physical address. | Yes |
 | +  **street** | String | The street of the user's address. | Yes |

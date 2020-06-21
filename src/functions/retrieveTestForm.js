@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports.retrieveTestForm = async (event, context) => {
   console.log('Event data', event)
@@ -7,24 +7,24 @@ module.exports.retrieveTestForm = async (event, context) => {
     options: [
       {
         text: {
-          type: "plain_text",
-          text: "*this is plain_text text*"
+          type: 'plain_text',
+          text: '*this is plain_text text*'
         },
-        value: "value-0"
+        value: 'value-0'
       },
       {
         text: {
-          type: "plain_text",
-          text: "*this is plain_text text*"
+          type: 'plain_text',
+          text: '*this is plain_text text*'
         },
-        value: "value-1"
+        value: 'value-1'
       },
       {
         text: {
-          type: "plain_text",
-          text: "*this is plain_text text*"
+          type: 'plain_text',
+          text: '*this is plain_text text*'
         },
-        value: "value-2"
+        value: 'value-2'
       }
     ]
   }
