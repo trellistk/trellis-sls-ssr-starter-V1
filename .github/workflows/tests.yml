@@ -13,7 +13,7 @@ jobs:
     - name: Pull code
       uses: actions/checkout@master
     - name: Install dependencies
-      run: npx ci
+      run: npm ci
     - name: Download Serverless DynamoDB local libraries
       run: npx sls dynamodb install
     - name: Run unit tests
