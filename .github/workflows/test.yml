@@ -12,5 +12,7 @@ jobs:
     steps:
     - name: Pull code
       uses: actions/checkout@master
+    - name: Install modules
+      run: npm ci
     - name: Run unit tests
       run: npm run test
