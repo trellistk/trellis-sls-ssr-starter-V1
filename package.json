@@ -30,7 +30,7 @@
     "uuid": "^8.1.0"
   },
   "devDependencies": {
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "serverless-dynamodb-local": "^0.2.39",
     "serverless-jest-plugin": "^0.3.0",
     "serverless-offline": "^6.3.1",
