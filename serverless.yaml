@@ -13,7 +13,6 @@ custom:
       port: 8000
       migrate: true
       inMemory: false
-      dbPath: "../nouri-serverless"
 
 provider:
   name: aws
@@ -54,6 +53,10 @@ functions:
           method: post
           cors: true
           path: /signup
+          request:
+            passThrough: NEVER
+            schema:
+              application/json: "$(file(src/schema/create_user.json))"
   login:
     handler: src/functions/login.login
     events:
@@ -61,6 +64,10 @@ functions:
           method: post
           cors: true
           path: /login
+          request:
+            passThrough: NEVER
+            schema:
+              application/json: "$(file(src/schema/login.json))"
   getAllUsers:
     handler: src/functions/getAllUsers.getAllUsers
     events:
@@ -103,15 +110,15 @@ resources:
       Properties:
         TableName: "${self:provider.environment.DYNAMODB_TABLE}"
         AttributeDefinitions:
-            - AttributeName: "chapterState"
-              AttributeType: "S"
-            - AttributeName: "chapterDocument"
-              AttributeType: "S" 
+            - AttributeName: chapterState
+              AttributeType: S
+            - AttributeName: chapterDocument
+              AttributeType: S
         KeySchema:
-            - AttributeName: "chapterState"
-              KeyType: "HASH"
-            - AttributeName: "chapterDocument"
-              KeyType: "RANGE"
+            - AttributeName: chapterState
+              KeyType: HASH
+            - AttributeName: chapterDocument
+              KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

@@ -1,37 +1,51 @@
 'use strict'
 
 const test = require('tape')
-const { start, stop } = require('./test-utils/offline')
+const offline = require('./test-utils/offline')
 const fetch = require('node-fetch')
-const { userFactory, users } = require('./test-utils/testUsers')
+const { userFactory } = require('./test-utils/testUsers')
 
-const user = userFactory('username1', 'signup@gmail.com', 'password1', users)
 
-test('Signing up a new user', async t => {
-  await start()
+test('Happy path signing up a new user', async t => {
+  await offline.start()
 
   const res = await fetch('http://localhost:3000/dev/signup', {
     method: 'POST',
-    body: JSON.stringify(user)
+    body: JSON.stringify(userFactory.correct)
   })
   const json = await res.json()
   const expectedBody = 'User successfully created!'
 
   t.equals(res.status, 201, 'Returns http 201')
   t.equals(json.message, expectedBody, 'Returns correct response body')
+
+  await offline.stop()
   t.end()
 })
 
 test('Should not allow signup with non-unique username', async t => {
+  await offline.start()
+
   const res = await fetch('http://localhost:3000/dev/signup', {
     method: 'POST',
-    body: JSON.stringify(user)
+    body: JSON.stringify(userFactory.correct)
   })
-  const json = await res.json()
-  const expectedMessage = 'This username already exists.'
 
-  t.equals(res.status, 403, 'Returns http 403')
-  t.equals(json.message, expectedMessage, 'Returns correct response body')
-  await stop()
+  const res2 = await fetch('http://localhost:3000/dev/signup', {
+    method: 'POST',
+    body: JSON.stringify(userFactory.correct)
+  })
+
+  const json = await res2.json()
+  console.log('***** json', json)
+  const expectedMessage = 'ERROR_USERNAME_EXISTS'
+
+  t.equals(res2.status, 403, 'Returns http 403')
+  t.equals(json.error, expectedMessage, 'Returns correct response body')
+
+  await offline.stop()
   t.end()
 })
+
+// TODO Test missing required inputs
+// TODO Test incorrectly formatted values

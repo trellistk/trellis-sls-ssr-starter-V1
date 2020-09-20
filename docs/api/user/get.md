@@ -40,7 +40,7 @@ Once a user logs in and is authenticated, they can access their user information
     "street": "12345 N Awesome St",
     "aptSte": "Apt 1354",
     "city": "Seattle",
-    "states": "Washington",
+    "state": "Washington",
     "zip": 12345
   },
   "dietaryRestrictions": "My child has an allergy to bananas.",

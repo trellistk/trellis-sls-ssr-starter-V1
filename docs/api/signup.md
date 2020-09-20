@@ -27,7 +27,7 @@ Must provide the required user info.
   "address": {
     "street": "12345 N Awesome St",
     "city": "Seattle",
-    "states": "Washington",
+    "state": "Washington",
     "zip": 12345
   },
   "deliveryDay": "Monday"
@@ -52,7 +52,7 @@ Must provide the required user info.
   "address": {
     "street": "12345 N Awesome St",
     "city": "Seattle",
-    "states": "Washington",
+    "state": "Washington",
     "zip": 12345
   },
   "deliveryDay": "Monday"

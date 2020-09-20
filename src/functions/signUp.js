@@ -1,35 +1,88 @@
 'use strict'
 const bcrypt = require('bcryptjs')
-const { httpResponse } = require('../../helpers/response')
-const { createChapterDocument } = require('../../helpers/db')
+const { httpResponse, httpError } = require('../../helpers/response')
+const { createDocument } = require('../../helpers/db')
 const logger = require('../../helpers/logger')
+
+const sequence = {
+  START_SIGNUP_SEQUENCE: 'START_SIGNUP_SEQUENCE',
+  STEP_EVENT_BODY_PARSED: 'STEP_EVENT_BODY_PARSED',
+  ERROR_HASHING_PASSWORD: 'ERROR_HASHING_PASSWORD', STEP_PASSWORD_HASHED: 'STEP_PASSWORD_HASHED',
+  STEP_DOCUMENT_DATA_COLLECTED: 'STEP_DOCUMENT_DATA_COLLECTED',
+  ERROR_USERNAME_EXISTS: 'ERROR_USERNAME_EXISTS',
+  ERROR_CREATING_USER: 'ERROR_CREATING_USER',
+  SUCCESS_SIGNUP_USER_SEQUENCE: 'SUCCESS_SIGNUP_USER_SEQUENCE'
+}
 
 module.exports.signUp = async (event, context) => {
   const { logInfo, logError, logAdd } = logger({
     sequence: 'SEQUENCE_SIGNUP_USER'
   })
-  const document = {}
+
+  logInfo(sequence.START_SIGNUP_SEQUENCE)
+
+  const {
+    password,
+    chapter,
+    email,
+    fname,
+    lname,
+    phone,
+    street1,
+    street2,
+    city,
+    state,
+    zip,
+    totalHouseholdIncome,
+    notes,
+    alias,
+  } = JSON.parse(event.body)
+  logInfo(sequence.STEP_EVENT_BODY_PARSED)
+
+  let hashedPassword
   try {
-    const data = JSON.parse(event.body)
-    logInfo('STEP_EVENT_BODY_PARSED', data)
+    hashedPassword = await bcrypt.hashSync(password, 10)
+  } catch (e) {
+    logError(sequence.ERROR_HASHING_PASSWORD, e)
+    return httpError(400, "Signup Error")
+  }
 
-    data.password = bcrypt.hashSync(data.password, 10)
-    logInfo('STEP_PASSWORD_HASHED', data.password)
+  logInfo(sequence.STEP_PASSWORD_HASHED)
 
-    document.chapterState = data.address.homeState
-    document.chapterDocument = 'USER#' + data.username
-    document.profile = data
-    logInfo('STEP_DOCUMENT_SET', document)
+  const document = {
+    chapter,
+    documentSort: `family:${email}`,
+    attributes: {
+      email,
+      fname,
+      lname,
+      phone,
+      street1,
+      street2,
+      city,
+      state,
+      zip,
+      totalHouseholdIncome,
+      notes,
+      alias,
+      password: hashedPassword
+    }
+  }
 
-    const { error: dbErr } = await createChapterDocument(document)
-    if (dbErr) {
-      if (dbErr.message == 'The conditional request failed') {
-        return httpResponse(403, 'This username already exists.')
-      };
-      return httpResponse(400, { error: dbErr })
-    };
-    return httpResponse(201, 'User successfully created!')
-  } catch (error) {
-    return httpResponse(500, { error })
-  };
+  logInfo(sequence.STEP_DOCUMENT_DATA_COLLECTED)
+
+  const { error: dbErr } = await createDocument(document)
+
+  if (dbErr) {
+    if (dbErr.message == 'The conditional request failed') {
+      logError(sequence.ERROR_USERNAME_EXISTS)
+      return httpError(403, sequence.ERROR_USERNAME_EXISTS)
+    }
+    logError(sequence.ERROR_CREATING_USER, dbErr)
+    return httpError(400, sequence.ERROR_CREATING_USER)
+  }
+
+  logInfo(sequence.SUCCESS_SIGNUP_USER_SEQUENCE, `family:${email}`)
+
+  return httpResponse(201, 'User successfully created!')
 }

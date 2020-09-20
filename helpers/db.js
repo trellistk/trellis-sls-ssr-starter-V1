@@ -1,27 +1,28 @@
 'use strict'
 
 const db = require('../database/dynamodb')
-const nouriChapters = process.env.DYNAMODB_TABLE
-const logger = require('../helpers/logger')
+const TableName = process.env.DYNAMODB_TABLE
 
-module.exports.createChapterDocument = async (document) => {
-  const { logInfo, logError, logAdd } = logger({
-    sequence: 'SEQUENCE_CREATE_DOCUMENT'
-  })
+module.exports.createDocument = async ({
+  chapter, // primary key/chapter name
+  documentSort, // sort key/document type
+  attributes // other attributes
+}) => {
+  attributes.chapterState = chapter
+  attributes.chapterDocument = documentSort
+
   const params = {
-    TableName: nouriChapters,
-    Item: document,
+    TableName,
+    Item: {...attributes},
     ConditionExpression: 'attribute_not_exists(chapterDocument)'
   }
-  logInfo('STEP_PARAMS_CREATED', params)
+
   try {
-    const newDocument = await db.put(params).promise()
-    logInfo('STEP_DOCUMENT_CREATED', newDocument)
-    return newDocument
+    await db.put(params).promise()
+    return { }
   } catch (error) {
-    logError('ERROR_CREATING_DOCUMENT', error)
     return { error }
-  };
+  }
 }
 
 module.exports.queryDeliveryList = async (partitionKey, city, deliveryDay) => {
@@ -49,26 +50,25 @@ module.exports.queryDeliveryList = async (partitionKey, city, deliveryDay) => {
   };
 }
 
-module.exports.getChapterDocument = async (partitionKey, sortKey) => {
-  const { logInfo, logError, logAdd } = logger({
-    sequence: 'SEQUENCE_GET_CHAPTER_DOCUMENT'
-  })
+module.exports.getDocument = async (chapter, sortKey) => {
   const params = {
-    TableName: nouriChapters,
+    TableName,
     Key: {
-      chapterState: partitionKey,
+      chapterState: chapter,
       chapterDocument: sortKey
     }
   }
-  logInfo('STEP_DOCUMENT_PARAMETERS', params)
   try {
-    const document = await db.get(params).promise()
-    logInfo('STEP_DOCUMENT_RETRIEVED', document)
-    return document
+    console.log('***** get params', params)
+    const res = await db.get(params).promise()
+    if (!res.Item) {
+      return { error: 'User not found' }
+    }
+
+    return { data: res.Item }
   } catch (error) {
-    logError('ERROR_RETRIEVING_DOCUMENT', error)
     return { error }
-  };
+  }
 }
 
 module.exports.updateUserDocument = async (partitionKey, sortKey, userData) => {
