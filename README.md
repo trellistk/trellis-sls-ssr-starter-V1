@@ -4,8 +4,17 @@ This project is to help us to manage family and delivery data.
 
 ## Table of Contents <!-- omit in toc -->
 
-- [Technologies](#technologies)
-- [Quick Start](#quick-start)
+- [<<<<<<< HEAD](#-head)
+  - [Technologies](#technologies)
+  - [Quick Start](#quick-start)
+  - [Troubleshooting](#troubleshooting)
+<<<<<<< HEAD
+=======
+- [<<<<<<< HEAD](#-head)
+  - [Technologies](#technologies)
+  - [Quick Start](#quick-start)
+  - [Troubleshooting](#troubleshooting)
+>>>>>>> Refining of API:
 
 ## Technologies
 
@@ -53,3 +62,7 @@ This project is to help us to manage family and delivery data.
    ```
 
 Available routes will be printed out in the terminal.
+
+## Troubleshooting
+
+- Database Validation Error: Check if the keys are all there. If developing locally with offline and changes to the db schema has happened recently, delete ``shared-local-instance-db`` to reset the local table.

@@ -16,7 +16,7 @@ module.exports.start = async () => {
     })
 
     child.stderr.on('data', err => {
-      console.error(`Error starting Offline: ${err}`)
+      console.error(`Offline Error: ${err}`)
     })
   }
 

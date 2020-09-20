@@ -2,10 +2,6 @@
 
 const maskObj = (obj) => {
   const newObj = { ...obj }
-  // if (
-  //   newObj.data &&
-  //   newObj.data.password
-  // ) newObj.data.password = '***'
   return newObj
 }
 

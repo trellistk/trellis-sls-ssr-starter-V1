@@ -1,44 +1,20 @@
 'use strict'
 
-module.exports.userFactory = function(username, email, password, props) {
-  return {
-    username,
-    email,
-    password,
-    fName: props.fName,
-    lName: props.lName,
-    phone: props.phone,
-    verifiedEmail: props.verifiedEmail,
-    familyMembers: props.familyMembers,
-    address: props.address,
-    dietaryRestrictions: props.dietaryRestrictions,
-    specialNotes: props.specialNotes,
-    deliveryDay: props.deliveryDay,
-    deliveryInstructions: props.deliveryInstructions
+module.exports.userFactory = {
+  correct: {
+    chapter: 'seattle-eastside',
+    email: 'jane@doe.com',
+    password: '123password&23845',
+    fname: 'jane',
+    lname: 'doe',
+    phone: '1234567890',
+    street1: '123 main st apt 7',
+    street2: undefined,
+    city: 'seattle',
+    state: 'wa',
+    zip: '98119',
+    totalHouseholdIncome: 1500,
+    communityAlias: undefined,
+    deliveryNotes: undefined
   }
-}
-
-module.exports.users = {
-  fName: 'Harry',
-  lName: 'Potter',
-  phone: '123-456-7890',
-  verifiedEmail: false,
-  familyMembers: {
-    person: {
-      fname: 'Harry',
-      child: false
-    }
-  },
-  address: {
-    street: '123 Hogwarts St',
-    street2: 'Tower Gryffindor',
-    aptSte: '',
-    city: 'Seattle',
-    homeState: 'Washington',
-    zip: 12345
-  },
-  dietaryRestrictions: 'Banana Allergy',
-  specialNotes: 'Delivery personnel must be a wizard or witch to enter Hogwarts',
-  deliveryDay: 'Friday',
-  deliveryInstructions: 'Tap great hall door four times and say "Lemon Drops".'
 }

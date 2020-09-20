@@ -1,26 +1,24 @@
 'use strict'
 
 const test = require('tape')
-const { start, stop } = require('./test-utils/offline')
+const offline = require('./test-utils/offline')
 const fetch = require('node-fetch')
-const { userFactory, users } = require('./test-utils/testUsers')
+const { userFactory } = require('./test-utils/testUsers')
 
-const user = userFactory('username2', 'login@gmail.com', 'password2', users)
+test('Happy path Logging a user in', async t => {
+  await offline.start()
 
-test('Logging a user in', async t => {
-  await start()
-
-  const res1 = await fetch('http://localhost:3000/dev/signup', {
+  await fetch('http://localhost:3000/dev/signup', {
     method: 'POST',
-    body: JSON.stringify(user)
+    body: JSON.stringify(userFactory.correct)
   })
 
   const res2 = await fetch('http://localhost:3000/dev/login', {
     method: 'POST',
     body: JSON.stringify({
-      username: 'username2',
-      password: 'password2',
-      chapterState: user.address.homeState
+      email: userFactory.correct.email,
+      password: userFactory.correct.password,
+      chapter: userFactory.correct.chapter
     })
   })
   const json = await res2.json()
@@ -28,42 +26,58 @@ test('Logging a user in', async t => {
 
   t.equals(res2.status, 200, 'Returns http 200')
   t.equals(json.message, expectedBody, 'Returns correct response body')
+
+  await offline.stop()
   t.end()
 })
 
 test('Should not log in a user with incorrect username', async t => {
+  await offline.start()
 
-  const res2 = await fetch('http://localhost:3000/dev/login', {
+  await fetch('http://localhost:3000/dev/signup', {
+    method: 'POST',
+    body: JSON.stringify(userFactory.correct)
+  })
+
+  const loginRes = await fetch('http://localhost:3000/dev/login', {
     method: 'POST',
     body: JSON.stringify({
-      username: 'badusername1',
-      password: 'password2',
-      chapterState: user.address.homeState
+      email: 'badusername1',
+      password: userFactory.correct.password,
+      chapterState: userFactory.correct.chapter
     })
   })
-  const json = await res2.json()
-  const expectedBody = 'User not found'
+  const json = await loginRes.json()
 
-  t.equals(res2.status, 404, 'Returns http 404')
-  t.equals(json.message, expectedBody, 'Returns correct response body')
+  t.equals(loginRes.status, 403, 'Returns http 404')
+  t.equals(json.error, 'Forbidden', 'Returns correct response body')
+
+  await offline.stop()
   t.end()
 })
 
 test('Should not log in a user with incorrect password', async t => {
+  await offline.start()
 
-  const res2 = await fetch('http://localhost:3000/dev/login', {
+  await fetch('http://localhost:3000/dev/signup', {
+    method: 'POST',
+    body: JSON.stringify(userFactory.correct)
+  })
+
+  const loginRes = await fetch('http://localhost:3000/dev/login', {
     method: 'POST',
     body: JSON.stringify({
-      username: 'username2',
+      email: userFactory.correct.email,
       password: 'badpassword',
-      chapterState: user.address.homeState
+      chapter: userFactory.correct.chapter
     })
   })
-  const json = await res2.json()
-  const expectedBody = 'Password is incorrect'
+  const json = await loginRes.json()
 
-  t.equals(res2.status, 404, 'Returns http 404')
-  t.equals(json.message, expectedBody, 'Returns correct response body')
-  await stop()
+  console.log('***** loginRes', loginRes)
+  t.equals(loginRes.status, 403, 'Returns http 404')
+  t.equals(json.error, 'Forbidden', 'Returns correct response body')
+  
+  await offline.stop()
   t.end()
 })

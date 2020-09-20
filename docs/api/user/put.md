@@ -60,7 +60,7 @@ Partial data is allowed. An empty string can be used to "delete" data, i.e. a us
     "street": "12345 N Awesome St",
     "aptSte": "Apt 1354",
     "city": "Seattle",
-    "states": "Washington",
+    "state": "Washington",
     "zip": 12345
   },
   "dietaryRestrictions": "My child has an allergy to bananas.",

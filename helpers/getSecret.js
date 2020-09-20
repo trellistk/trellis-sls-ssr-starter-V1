@@ -9,6 +9,10 @@ module.exports.getSecret = async (secretName) => {
     WithDecryption: true
   }
 
-  const result = await ssm.getParameter(params).promise()
-  return result.Parameter.Value
+  try {
+    const result = await ssm.getParameter(params).promise()
+    return { key: result.Parameter.Value }
+  } catch (error) {
+    return { error }
+  }
 }

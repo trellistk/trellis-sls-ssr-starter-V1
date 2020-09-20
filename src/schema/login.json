@@ -1,0 +1,29 @@
+{
+  "definitions": {},
+  "$schema": "",
+  "type": "object",
+  "title": "Login User schema",
+  "required": [
+    "email",
+    "password",
+    "chapter"
+  ],
+  "properties": {
+    "chapter": {
+      "type": "string",
+      "title": "chapter"
+    },
+    "email": {
+      "type": "string",
+      "title": "email",
+      "minLength": 3,
+      "maxLength": 30
+    },
+    "password": {
+      "title": "password",
+      "type": "string",
+      "minLength": 7,
+      "maxLength": 30
+    }
+  }
+}
