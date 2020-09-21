@@ -3,7 +3,7 @@
 const test = require('tape')
 const offline = require('./test-utils/offline')
 const fetch = require('node-fetch')
-const { userFactory } = require('./test-utils/testUsers')
+const { userFactory } = require('./test-utils/data_factories')
 
 
 test('Happy path signing up a new user', async t => {
@@ -37,7 +37,7 @@ test('Should not allow signup with non-unique username', async t => {
   })
 
   const json = await res2.json()
-  console.log('***** json', json)
+
   const expectedMessage = 'ERROR_USERNAME_EXISTS'
 
   t.equals(res2.status, 403, 'Returns http 403')

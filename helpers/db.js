@@ -3,6 +3,10 @@
 const db = require('../database/dynamodb')
 const TableName = process.env.DYNAMODB_TABLE
 
+/**
+ * @description Creates DynamoDB documents
+ * @param {*} param
+ */
 module.exports.createDocument = async ({
   chapter, // primary key/chapter name
   documentSort, // sort key/document type
@@ -25,6 +29,7 @@ module.exports.createDocument = async ({
   }
 }
 
+// TODO Implement
 module.exports.queryDeliveryList = async (partitionKey, city, deliveryDay) => {
   const { logInfo, logError, logAdd } = logger({
     sequence: 'SEQUENCE_QUERY_DELIVERY_LIST'
@@ -50,6 +55,11 @@ module.exports.queryDeliveryList = async (partitionKey, city, deliveryDay) => {
   };
 }
 
+/**
+ * @description Retrieves a DynamoDB Document
+ * @param {*} chapter 
+ * @param {*} sortKey 
+ */
 module.exports.getDocument = async (chapter, sortKey) => {
   const params = {
     TableName,
@@ -58,9 +68,10 @@ module.exports.getDocument = async (chapter, sortKey) => {
       chapterDocument: sortKey
     }
   }
+
   try {
-    console.log('***** get params', params)
     const res = await db.get(params).promise()
+
     if (!res.Item) {
       return { error: 'User not found' }
     }
@@ -71,60 +82,83 @@ module.exports.getDocument = async (chapter, sortKey) => {
   }
 }
 
-module.exports.updateUserDocument = async (partitionKey, sortKey, userData) => {
-  const { logInfo, logError, logAdd } = logger({
-    sequence: 'SEQUENCE_UPDATE_USER'
-  })
+// TODO Method for updating just the username and password.
+// NOTE: will likely need to delete old entry and re-add the new entry.
+
+/**
+ * @description Helper. Filters builds the attributes
+ * and help us get around reserved keywords
+ * @param {*} userInfo 
+ */
+const updateUserExpressionHelper = userInfo => {
+  const processed = {
+    UpdateExpression: 'set',
+    ExpressionAttributeValues: {},
+    ExpressionAttributeNames: {}
+  }
+  for (const key in userInfo) {
+    const val = userInfo[key]
+
+    if (val) {
+      // 'state' is reserved so we have to rename it
+      if (key === 'state') {
+        processed.UpdateExpression += ` #us${key} = :${key},`
+        processed.ExpressionAttributeValues[`:${key}`] = val
+        processed.ExpressionAttributeNames[`#us${key}`] = `:${key}`
+        continue
+      }
+      processed.UpdateExpression += ` #${key} = :${key},`
+      processed.ExpressionAttributeValues[`:${key}`] = val
+      processed.ExpressionAttributeNames[`#${key}`] = `:${key}`
+    }
+  }
+  // remove the last comma
+  processed.UpdateExpression = processed.UpdateExpression.slice(0, -1)
+  return processed
+}
+
+/**
+ * @description Helper. Custom attribute names have extra characters
+ * This removes those from the keys in the object.
+ * @param {*} updateData 
+ */
+const updateUserCleanObj = updateData => {
+  const newObj = {}
+  for (const key in updateData) {
+    const newKey = key.slice(1)
+    newObj[newKey] = updateData[key]
+  }
+  return newObj
+}
+
+/**
+ * @description Updates a Family's document. Only supports updating of family details. Does not include email and password
+ * @param {*} chapter 
+ * @param {*} sortKey 
+ * @param {*} attributes 
+ */
+module.exports.updateFamilyDocument = async (chapter, sortKey, attributes) => {
+  const processedExpression = updateUserExpressionHelper(attributes)
+
   const params = {
-    TableName: nouriChapters,
+    TableName,
     Key: {
-      chapterState: partitionKey,
+      chapterState: chapter,
       chapterDocument: sortKey
     },
     ConditionExpression: 'attribute_exists(chapterDocument)',
-    ExpressionAttributeValues: {
-      ':a': userData.fName,
-      ':b': userData.lName,
-      ':c': userData.email,
-      ':e': userData.phone,
-      ':f': userData.familyMembers.person.fname,
-      ':g': userData.familyMembers.person.child,
-      ':h': userData.address.street,
-      ':i': userData.address.street2,
-      ':j': userData.address.aptSte,
-      ':k': userData.address.city,
-      ':l': userData.address.homeState,
-      ':m': userData.address.zip,
-      ':n': userData.dietaryRestrictions,
-      ':o': userData.specialNotes,
-      ':p': userData.deliveryDay,
-      ':q': userData.deliveryInstructions
-    },
-    UpdateExpression: `set profile.fName = :a,
-      profile.lName = :b,
-      profile.email = :c,
-      profile.phone = :e,
-      profile.familyMembers.person.fname = :f,
-      profile.familyMembers.person.child = :g,
-      profile.address.street = :h,
-      profile.address.street2 = :i,
-      profile.address.aptSte = :j,
-      profile.address.city = :k,
-      profile.address.homeState = :l,
-      profile.address.zip = :m,
-      profile.dietaryRestrictions = :n,
-      profile.specialNotes = :o,
-      profile.deliveryDay = :p,
-      profile.deliveryInstructions = :q`,
+    UpdateExpression: processedExpression.UpdateExpression,
+    ExpressionAttributeValues: processedExpression.ExpressionAttributeValues,
+    ExpressionAttributeNames: processedExpression.ExpressionAttributeNames,
     ReturnValues: 'UPDATED_NEW'
   }
-  logInfo('STEP_PARAMS_COMPLETE', params)
+
   try {
-    const updatedUser = await db.update(params).promise()
-    logInfo('STEP_UPDATE_DOCUMENT_COMPLETE', updatedUser)
-    return updatedUser
+    const { Attributes: updatedInfo } = await db.update(params).promise()
+    return {
+      info: updateUserCleanObj(updatedInfo)
+    }
   } catch (error) {
-    logError('ERROR_UPDATING_DOCUMENT', error)
     return { error }
-  };
+  }
 }

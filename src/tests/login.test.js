@@ -3,7 +3,7 @@
 const test = require('tape')
 const offline = require('./test-utils/offline')
 const fetch = require('node-fetch')
-const { userFactory } = require('./test-utils/testUsers')
+const { userFactory } = require('./test-utils/data_factories')
 
 test('Happy path Logging a user in', async t => {
   await offline.start()
@@ -74,7 +74,6 @@ test('Should not log in a user with incorrect password', async t => {
   })
   const json = await loginRes.json()
 
-  console.log('***** loginRes', loginRes)
   t.equals(loginRes.status, 403, 'Returns http 404')
   t.equals(json.error, 'Forbidden', 'Returns correct response body')
   

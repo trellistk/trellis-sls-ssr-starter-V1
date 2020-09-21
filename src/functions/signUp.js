@@ -14,6 +14,11 @@ const sequence = {
   SUCCESS_SIGNUP_USER_SEQUENCE: 'SUCCESS_SIGNUP_USER_SEQUENCE'
 }
 
+/**
+ * @description Signs up a new family. Does NOT handle admin accounts.
+ * @param {*} event 
+ * @param {*} context 
+ */
 module.exports.signUp = async (event, context) => {
   const { logInfo, logError, logAdd } = logger({
     sequence: 'SEQUENCE_SIGNUP_USER'
@@ -34,8 +39,8 @@ module.exports.signUp = async (event, context) => {
     state,
     zip,
     totalHouseholdIncome,
-    notes,
-    alias,
+    deliveryNotes,
+    communityAlias,
   } = JSON.parse(event.body)
   logInfo(sequence.STEP_EVENT_BODY_PARSED)
 
@@ -63,8 +68,8 @@ module.exports.signUp = async (event, context) => {
       state,
       zip,
       totalHouseholdIncome,
-      notes,
-      alias,
+      deliveryNotes,
+      communityAlias,
       password: hashedPassword
     }
   }

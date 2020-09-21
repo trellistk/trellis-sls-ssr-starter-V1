@@ -17,22 +17,8 @@ Must provide the required user info.
 
 **Data example**
 
-```json
-{
-  "fName": "George",
-  "lName": "Potter",
-  "email": "awesome@gmail.com",
-  "password": "Hextech12!?",
-  "phone": "123-456-7890",
-  "address": {
-    "street": "12345 N Awesome St",
-    "city": "Seattle",
-    "state": "Washington",
-    "zip": 12345
-  },
-  "deliveryDay": "Monday"
-}
-```
+- [Schema](../../src/schema/create_user.json)
+- [Example](../../src/tests/test-utils/data_factories.js): userfactory.correct
 
 ## Success Response
 
@@ -44,18 +30,7 @@ Must provide the required user info.
 
 ```json
 {
-  "fName": "George",
-  "lName": "Potter",
-  "email": "awesome@gmail.com",
-  "password": "Hextech12!?",
-  "phone": "123-456-7890",
-  "address": {
-    "street": "12345 N Awesome St",
-    "city": "Seattle",
-    "state": "Washington",
-    "zip": 12345
-  },
-  "deliveryDay": "Monday"
+  "message": "response message",
 }
 ```
 

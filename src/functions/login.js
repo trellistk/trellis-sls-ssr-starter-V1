@@ -20,6 +20,11 @@ const sequence = {
   SUCCESS_LOGIN_USER_AUTHENTICATED: 'SUCCESS_LOGIN_USER_AUTHENTICATED'
 }
 
+/**
+ * @description Currently only logs in families. Admin NOT supported
+ * @param {*} event 
+ * @param {*} context 
+ */
 module.exports.login = async (event, context) => {
   const { logInfo, logError, logAdd } = logger({
     sequence: 'SEQUENCE_LOGIN_USER'

@@ -30,6 +30,9 @@ Partial data is allowed. An empty string can be used to "delete" data, i.e. a us
 }
 ```
 
+- See [Schema](../../../src/schema/update_family_details.json)
+- See [Example](../../../src/tests/test-utils/data_factories.js): userFactory.correctUpdate
+
 ## Success Response
 
 **Condition** : Data provided is valid and User is Authenticated.
@@ -37,38 +40,6 @@ Partial data is allowed. An empty string can be used to "delete" data, i.e. a us
 **Code** : `200 OK`
 
 **Content example** : Response will reflect back the updated information.
-
-```json
-{
-  "fName": "John",
-  "lName": "Potter",
-  "email": "awesome@gmail.com",
-  "password": "Hextech12!?",
-  "phone": "123-456-7890",
-  "verifiedEmail": true,
-  "familyMembers": {
-    "person": {
-      "fname": "George",
-      "child": false
-    },
-    "person": {
-      "fname": "Jade",
-      "child": true
-    }
-  },
-  "address": {
-    "street": "12345 N Awesome St",
-    "aptSte": "Apt 1354",
-    "city": "Seattle",
-    "state": "Washington",
-    "zip": 12345
-  },
-  "dietaryRestrictions": "My child has an allergy to bananas.",
-  "specialNotes": "An adult must answer the door to receive our order.",
-  "deliveryDay": "Monday",
-  "deliveryInstructions": ""
-}
-```
 
 ## Error Response
 
