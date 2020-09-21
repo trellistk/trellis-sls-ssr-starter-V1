@@ -1,0 +1,16 @@
+name: Run Tests
+
+on:
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  buildAndTest:
+    name: Build and test the pull request
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - run: |
+      npm i
+      npm test

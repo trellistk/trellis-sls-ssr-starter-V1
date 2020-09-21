@@ -5,6 +5,7 @@ const response = require('../../helpers/response')
 
 const usersTable = process.env.DYNAMODB_TABLE
 
+// TODO for admins
 module.exports.deleteUser = (event, context, callback) => {
   const { city, username } = JSON.parse(event.body) // Change with Slack Integration?
 

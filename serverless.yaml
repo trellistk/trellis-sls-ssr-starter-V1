@@ -76,22 +76,26 @@ functions:
           cors: true
           path: /users
           authorizer: authorize        
-  getUser:
-    handler: src/functions/getUser.getUser
+  getFamilyDetails:
+    handler: src/functions/getFamilyDetails.getFamilyDetails
     events:
       - http:
           method: get
           cors: true
-          path: /user
-          authorizer: authorize 
-  updateUser:
-    handler: src/functions/updateUser.updateUser
+          path: /family
+          authorizer: authorize
+  updateFamilyDetails:
+    handler: src/functions/updateFamilyDetails.updateFamilyDetails
     events:
       - http:
           method: put
           cors: true
-          path: /user
+          path: /family
           authorizer: authorize 
+          request:
+            passThrough: NEVER
+            schema:
+              application/json: "$(file(src/schema/update_family_details.json))"
   deleteUser:
     handler: src/functions/deleteUser.deleteUser
     events:

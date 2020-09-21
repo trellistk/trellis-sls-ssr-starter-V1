@@ -5,6 +5,7 @@ const { httpResponse } = require('../../helpers/response')
 
 const usersTable = process.env.DYNAMODB_TABLE
 
+// TODO for admins
 module.exports.getAllUsers = (event, context, callback) => {
   return db.scan({
     TableName: usersTable

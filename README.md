@@ -4,17 +4,10 @@ This project is to help us to manage family and delivery data.
 
 ## Table of Contents <!-- omit in toc -->
 
-- [<<<<<<< HEAD](#-head)
-  - [Technologies](#technologies)
-  - [Quick Start](#quick-start)
-  - [Troubleshooting](#troubleshooting)
-<<<<<<< HEAD
-=======
-- [<<<<<<< HEAD](#-head)
-  - [Technologies](#technologies)
-  - [Quick Start](#quick-start)
-  - [Troubleshooting](#troubleshooting)
->>>>>>> Refining of API:
+- [Technologies](#technologies)
+- [Quick Start](#quick-start)
+- [Repository Quick Overview](#repository-quick-overview)
+- [Troubleshooting](#troubleshooting)
 
 ## Technologies
 
@@ -62,6 +55,25 @@ This project is to help us to manage family and delivery data.
    ```
 
 Available routes will be printed out in the terminal.
+
+## Repository Quick Overview
+- .github: github actions for our CI/CD pipeline
+- database
+  - dynamodb.js: helps us run the aws dynamodb client
+- helpers
+  - db.js: database calls to DynamoDB
+  - logger.js: logging helper
+  - response.js: http response helper.
+- src
+  - functions: ourlambda functions:
+    - authorize.js: middleware function that gates requests that use bearer tokens.
+  - schema: schemas for post requests which API Gateway uses for validating requests.
+  - tests: contains tests against the app
+    - test-utils: helpers for running the tests
+      - data_factories: generates data for testing
+      - offline: runs serverless in a child process so we can run integration tests against it.
+- package.json: You can find scripts to run the app here
+- serverless.yaml: Serverless settings and route declarations
 
 ## Troubleshooting
 

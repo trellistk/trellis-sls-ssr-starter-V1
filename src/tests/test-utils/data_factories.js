@@ -16,5 +16,15 @@ module.exports.userFactory = {
     totalHouseholdIncome: 1500,
     communityAlias: undefined,
     deliveryNotes: undefined
+  },
+  correctUpdate: {
+    fname: 'janie',
+    lname: 'do',
+    phone: '1234567098',
+    street1: '124 main st apt 7',
+    city: 'everett',
+    state: 'wa',
+    zip: '98000',
+    totalHouseholdIncome: 2000
   }
 }
