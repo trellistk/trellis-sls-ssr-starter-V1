@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lint": "standard",
     "test": "tape 'src/tests/*.js'",
     "test:signup": "tape 'src/tests/signUp.test.js'",
     "test:login": "tape 'src/tests/login.test.js'",

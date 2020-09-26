@@ -10,7 +10,19 @@ jobs:
     name: Build and test the pull request
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - run: |
-      npm i
-      npm test
+    - name: Checkout code
+      uses: actions/checkout@v1
+    
+    - name: Install API Dependencies
+      run: npm i
+    
+    - name: Install Serverless dependencies
+      uses: serverless/github-action@master
+      with:
+        args: dynamodb install --conceal
+
+    - name: Check lint
+      run: npm run lint
+
+
+    
