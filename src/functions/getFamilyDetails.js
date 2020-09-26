@@ -11,8 +11,8 @@ const sequence = {
 
 /**
  * @description Gets details about one family for the family. Does not support query for admins.
- * @param {*} event 
- * @param {*} context 
+ * @param {*} event
+ * @param {*} context
  */
 module.exports.getFamilyDetails = async (event, context) => {
   const { logInfo, logError, logAdd } = logger({
@@ -28,11 +28,10 @@ module.exports.getFamilyDetails = async (event, context) => {
           email
         },
         principalId: chapter
-      },
+      }
     }
   } = event
 
-  
   logInfo(sequence.STEP_GET_USER_AUTHORIZER_DATA_FOUND)
 
   logAdd('chapter', chapter)
@@ -45,7 +44,7 @@ module.exports.getFamilyDetails = async (event, context) => {
 
   if (dbError) {
     logError('STEP_GET_USER_ERROR', dbError)
-    return httpResponse(500, dbError)
+    return httpError(500, dbError)
   }
 
   logInfo('STEP_USER_RESPONSE')

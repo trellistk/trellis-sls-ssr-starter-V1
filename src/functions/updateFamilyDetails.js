@@ -1,7 +1,7 @@
 'use strict'
 
 const { httpResponse, httpError } = require('../../helpers/response')
-const { updateUserDocument } = require('../../helpers/db')
+const { updateFamilyDocument } = require('../../helpers/db')
 const logger = require('../../helpers/logger')
 
 const sequence = {
@@ -15,8 +15,8 @@ const sequence = {
 /**
  * @description Updates a family's information excluding
  * email and password
- * @param {*} event 
- * @param {*} context 
+ * @param {*} event
+ * @param {*} context
  */
 module.exports.updateFamilyDetails = async (event, context) => {
   const { logInfo, logError, logAdd } = logger({

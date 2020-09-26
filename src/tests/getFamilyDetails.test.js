@@ -26,14 +26,14 @@ test('Happy path Get a user from the database', async t => {
   const token = loginJson.data
 
   const getUserRes = await fetch('http://localhost:3000/dev/family', {
-    method : 'GET',
-    headers: {'Authorization': 'Bearer ' + token}
+    method: 'GET',
+    headers: { Authorization: 'Bearer ' + token }
   })
 
   const getJson = await getUserRes.json()
 
   t.equals(getUserRes.status, 200, 'Returns http 200')
-  t.equals(getJson.message, getJson.message, 'Returns a correct response body')  //TODO: Can we actually check equality?
+  t.equals(getJson.message, getJson.message, 'Returns a correct response body') // TODO: Can we actually check equality?
 
   await offline.stop()
   t.end()
@@ -43,8 +43,8 @@ test('Should return 403 forbidden if user provides malformed authorization/token
   await offline.start()
 
   const getUserRes = await fetch('http://localhost:3000/dev/family', {
-    method : 'GET',
-    headers: {'Authorization': 'Bearer ' + 'wrongauthorization'}
+    method: 'GET',
+    headers: { Authorization: 'Bearer ' + 'wrongauthorization' }
   })
 
   const getJson = await getUserRes.json()
@@ -68,7 +68,7 @@ test('Should return 403 forbidden if user provides no authorization/token', asyn
 
   t.equals(res3.status, 401, 'Returns http 401')
   t.equals(getJson.message, expectedBody, 'Returns correct response body')
-  
+
   await offline.stop()
   t.end()
 })

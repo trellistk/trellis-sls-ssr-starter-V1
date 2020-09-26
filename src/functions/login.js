@@ -22,8 +22,8 @@ const sequence = {
 
 /**
  * @description Currently only logs in families. Admin NOT supported
- * @param {*} event 
- * @param {*} context 
+ * @param {*} event
+ * @param {*} context
  */
 module.exports.login = async (event, context) => {
   const { logInfo, logError, logAdd } = logger({
@@ -31,7 +31,7 @@ module.exports.login = async (event, context) => {
   })
 
   const { email, password, chapter } = JSON.parse(event.body)
-    
+
   const family = `family:${email}`
   logAdd('userid', family)
 
@@ -43,7 +43,7 @@ module.exports.login = async (event, context) => {
     logError(sequence.ERROR_LOGIN_RETRIEVING_USER_DATA, dbError)
     return httpError(403, 'Forbidden')
   }
-    
+
   logInfo(sequence.STEP_LOGIN_RETRIEVED_USER_DATA)
 
   const {
@@ -53,7 +53,7 @@ module.exports.login = async (event, context) => {
   try {
     const isMatch = bcrypt.compareSync(password, hashedPassword)
     logInfo(sequence.STEP_LOGIN_COMPARE_RESULT, `Match: ${isMatch}`)
-  
+
     if (!isMatch) {
       logError(sequence.ERROR_LOGIN_COMPARE_RESULT, `Match: ${isMatch}`)
       return httpError(403, 'Forbidden')
@@ -65,7 +65,7 @@ module.exports.login = async (event, context) => {
 
   const payload = { email, chapter }
 
-  const { key: jwtSecretKey, error: getSecretError} = await getSecret('/NouriServerless/jwtSecretKey/dev')
+  const { key: jwtSecretKey, error: getSecretError } = await getSecret('/NouriServerless/jwtSecretKey/dev')
 
   if (getSecretError) {
     logError(sequence.ERROR_LOGIN_SECRET_KEY_RETRIEVAL, getSecretError)

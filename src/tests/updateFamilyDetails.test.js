@@ -27,7 +27,7 @@ test('Happy path update a user in the database', async t => {
 
   const updateRes = await fetch('http://localhost:3000/dev/family', {
     method: 'PUT',
-    headers: {'Authorization': 'Bearer ' + token},
+    headers: { Authorization: 'Bearer ' + token },
     body: JSON.stringify(userFactory.correctUpdate)
   })
 

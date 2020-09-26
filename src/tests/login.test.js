@@ -76,7 +76,7 @@ test('Should not log in a user with incorrect password', async t => {
 
   t.equals(loginRes.status, 403, 'Returns http 404')
   t.equals(json.error, 'Forbidden', 'Returns correct response body')
-  
+
   await offline.stop()
   t.end()
 })

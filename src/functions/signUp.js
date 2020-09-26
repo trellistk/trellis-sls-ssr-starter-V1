@@ -7,7 +7,8 @@ const logger = require('../../helpers/logger')
 const sequence = {
   START_SIGNUP_SEQUENCE: 'START_SIGNUP_SEQUENCE',
   STEP_EVENT_BODY_PARSED: 'STEP_EVENT_BODY_PARSED',
-  ERROR_HASHING_PASSWORD: 'ERROR_HASHING_PASSWORD', STEP_PASSWORD_HASHED: 'STEP_PASSWORD_HASHED',
+  ERROR_HASHING_PASSWORD: 'ERROR_HASHING_PASSWORD',
+  STEP_PASSWORD_HASHED: 'STEP_PASSWORD_HASHED',
   STEP_DOCUMENT_DATA_COLLECTED: 'STEP_DOCUMENT_DATA_COLLECTED',
   ERROR_USERNAME_EXISTS: 'ERROR_USERNAME_EXISTS',
   ERROR_CREATING_USER: 'ERROR_CREATING_USER',
@@ -16,11 +17,11 @@ const sequence = {
 
 /**
  * @description Signs up a new family. Does NOT handle admin accounts.
- * @param {*} event 
- * @param {*} context 
+ * @param {*} event
+ * @param {*} context
  */
 module.exports.signUp = async (event, context) => {
-  const { logInfo, logError, logAdd } = logger({
+  const { logInfo, logError } = logger({
     sequence: 'SEQUENCE_SIGNUP_USER'
   })
 
@@ -40,7 +41,7 @@ module.exports.signUp = async (event, context) => {
     zip,
     totalHouseholdIncome,
     deliveryNotes,
-    communityAlias,
+    communityAlias
   } = JSON.parse(event.body)
   logInfo(sequence.STEP_EVENT_BODY_PARSED)
 
@@ -49,7 +50,7 @@ module.exports.signUp = async (event, context) => {
     hashedPassword = await bcrypt.hashSync(password, 10)
   } catch (e) {
     logError(sequence.ERROR_HASHING_PASSWORD, e)
-    return httpError(400, "Signup Error")
+    return httpError(400, 'Signup Error')
   }
 
   logInfo(sequence.STEP_PASSWORD_HASHED)
@@ -79,7 +80,7 @@ module.exports.signUp = async (event, context) => {
   const { error: dbErr } = await createDocument(document)
 
   if (dbErr) {
-    if (dbErr.message == 'The conditional request failed') {
+    if (dbErr.message === 'The conditional request failed') {
       logError(sequence.ERROR_USERNAME_EXISTS)
       return httpError(403, sequence.ERROR_USERNAME_EXISTS)
     }

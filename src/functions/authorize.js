@@ -4,17 +4,16 @@ const jwt = require('jsonwebtoken')
 const { generatePolicy } = require('../../helpers/genPolicy')
 const { getSecret } = require('../../helpers/getSecret')
 const { getDocument } = require('../../helpers/db')
-const { httpResponse } = require('../../helpers/response')
 const logger = require('../../helpers/logger')
 
 /**
  * @description Middleware for authorizing logins. Currently only
  * supports family logins
- * @param {*} event 
- * @param {*} context 
+ * @param {*} event
+ * @param {*} context
  */
 module.exports.authorize = async (event, context) => {
-  const { logInfo, logError, logAdd } = logger({
+  const { logInfo, logError } = logger({
     sequence: 'SEQUENCE_AUTHORIZE_USER'
   })
 
@@ -30,7 +29,7 @@ module.exports.authorize = async (event, context) => {
     return generatePolicy('undefined', 'Deny', event.methodArn)
   }
 
-  const { key: jwtSecretKey, err: getSecretErr} = await getSecret('/NouriServerless/jwtSecretKey/dev')
+  const { key: jwtSecretKey, err: getSecretErr } = await getSecret('/NouriServerless/jwtSecretKey/dev')
   if (getSecretErr) {
     logError('Error retrieving secret key', getSecretErr)
     return generatePolicy('undefined', 'Deny', event.methodArn)

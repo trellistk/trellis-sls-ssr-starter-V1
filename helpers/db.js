@@ -17,7 +17,7 @@ module.exports.createDocument = async ({
 
   const params = {
     TableName,
-    Item: {...attributes},
+    Item: { ...attributes },
     ConditionExpression: 'attribute_not_exists(chapterDocument)'
   }
 
@@ -31,11 +31,8 @@ module.exports.createDocument = async ({
 
 // TODO Implement
 module.exports.queryDeliveryList = async (partitionKey, city, deliveryDay) => {
-  const { logInfo, logError, logAdd } = logger({
-    sequence: 'SEQUENCE_QUERY_DELIVERY_LIST'
-  })
   const params = {
-    TableName: nouriChapters,
+    TableName,
     KeyConditionExpression: 'chapterState = :chapterState',
     FilterExpression: 'address.city = :city AND deliveryDay = :deliveryDay',
     ExpressionAttributeValues: {
@@ -44,21 +41,18 @@ module.exports.queryDeliveryList = async (partitionKey, city, deliveryDay) => {
       ':deliveryDay': deliveryDay
     }
   }
-  logInfo('STEP_PARAMS_CREATED', params)
   try {
     const deliveryList = await db.query(params).promise()
-    logInfo('STEP_DELIVERY_LIST_CREATED', deliveryList)
     return deliveryList
   } catch (error) {
-    logError('ERROR_RETRIEVING_DELIVERY_LIST', error)
     return { error }
   };
 }
 
 /**
  * @description Retrieves a DynamoDB Document
- * @param {*} chapter 
- * @param {*} sortKey 
+ * @param {*} chapter
+ * @param {*} sortKey
  */
 module.exports.getDocument = async (chapter, sortKey) => {
   const params = {
@@ -88,7 +82,7 @@ module.exports.getDocument = async (chapter, sortKey) => {
 /**
  * @description Helper. Filters builds the attributes
  * and help us get around reserved keywords
- * @param {*} userInfo 
+ * @param {*} userInfo
  */
 const updateUserExpressionHelper = userInfo => {
   const processed = {
@@ -120,7 +114,7 @@ const updateUserExpressionHelper = userInfo => {
 /**
  * @description Helper. Custom attribute names have extra characters
  * This removes those from the keys in the object.
- * @param {*} updateData 
+ * @param {*} updateData
  */
 const updateUserCleanObj = updateData => {
   const newObj = {}
@@ -133,9 +127,9 @@ const updateUserCleanObj = updateData => {
 
 /**
  * @description Updates a Family's document. Only supports updating of family details. Does not include email and password
- * @param {*} chapter 
- * @param {*} sortKey 
- * @param {*} attributes 
+ * @param {*} chapter
+ * @param {*} sortKey
+ * @param {*} attributes
  */
 module.exports.updateFamilyDocument = async (chapter, sortKey, attributes) => {
   const processedExpression = updateUserExpressionHelper(attributes)

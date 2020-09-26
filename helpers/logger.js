@@ -7,8 +7,8 @@ const maskObj = (obj) => {
 }
 
 /**
- * @description Helper for structured logging. 
- * @param {*} param 
+ * @description Helper for structured logging.
+ * @param {*} param
  * param.sequence = the name of the sequence that will run.
  */
 module.exports = ({

@@ -5,7 +5,6 @@ const offline = require('./test-utils/offline')
 const fetch = require('node-fetch')
 const { userFactory } = require('./test-utils/data_factories')
 
-
 test('Happy path signing up a new user', async t => {
   await offline.start()
 
@@ -26,7 +25,7 @@ test('Happy path signing up a new user', async t => {
 test('Should not allow signup with non-unique username', async t => {
   await offline.start()
 
-  const res = await fetch('http://localhost:3000/dev/signup', {
+  await fetch('http://localhost:3000/dev/signup', {
     method: 'POST',
     body: JSON.stringify(userFactory.correct)
   })
