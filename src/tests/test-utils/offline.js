@@ -6,7 +6,7 @@ let child
 
 module.exports.start = async () => {
   const createProcess = (resolve, reject) => {
-    child = spawn( 'sls', ['offline', 'start'])
+    child = spawn('sls', ['offline', 'start'])
 
     console.info(`Starting Offline. PID: ${child.pid}`)
 
@@ -16,7 +16,7 @@ module.exports.start = async () => {
     })
 
     child.stderr.on('data', err => {
-      console.error(`Error starting Offline: ${err}`)
+      console.error(`Offline Error: ${err}`)
     })
   }
 

@@ -1,6 +1,9 @@
 service: NouriMeals-API
 
-frameworkVersion: ">=1.1.0 <2.0.0"
+# Reference: https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
+
+frameworkVersion: "2"
+enableLocalInstallationFallback: true
 
 plugins:
   - serverless-dynamodb-local
@@ -13,7 +16,6 @@ custom:
       port: 8000
       migrate: true
       inMemory: false
-      dbPath: "../nouri-serverless"
 
 provider:
   name: aws
@@ -31,77 +33,100 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
-
-# package:
-#   include:
-#   - src/node_modules/argon2/**
+      Resource:
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+    - Effect: "Allow"
+      Action:
+        - ssm:GetParameter
+      Resource:
+        - "arn:aws:ssm:us-west-2:274772592742:parameter/NouriServerless/jwtSecretKey/dev"
+    - Effect: "Allow"
+      Action:
+        - kms:Decrypt
+      Resource:
+        - "arn:aws:ssm:us-west-2:274772592742:key/alias/aws/smm"
 
 functions:
-  createUser:
-    handler: src/functions/createUser.createUser
+  authorize:
+    handler: src/functions/authorize.authorize
+  signUp:
+    handler: src/functions/signUp.signUp
     events:
       - http:
           method: post
-          cors: true
-          path: /user
-          request:
-            schema:
-              application/json: "${file(src/schema/create_user_request.json)}"
+          # cors: true
+          path: /signup
+          # TODO: Fix schema validation
+          # request:
+          #   passThrough: NEVER
+          #   schema:
+          #     application/json: "$(file(src/schema/create_user.json))"
+  login:
+    handler: src/functions/login.login
+    events:
+      - http:
+          method: post
+          # cors: true
+          path: /login
+          # request:
+          #   passThrough: NEVER
+          #   schema:
+          #     application/json: "$(file(src/schema/login.json))"
   getAllUsers:
     handler: src/functions/getAllUsers.getAllUsers
     events:
       - http:
           method: get
-          cors: true
+          # cors: true
           path: /users
-  getUsersPerCity:
-    handler: src/functions/getUsersPerCity.getUsersPerCity
+          authorizer: authorize        
+  getFamilyDetails:
+    handler: src/functions/getFamilyDetails.getFamilyDetails
     events:
       - http:
           method: get
-          cors: true
-          path: "/users/{city}"         
-  getUser:
-    handler: src/functions/getUser.getUser
-    events:
-      - http:
-          method: get
-          cors: true
-          path: "/user"
-  updateUser:
-    handler: src/functions/updateUser.updateUser
+          # cors: true
+          path: /family
+          authorizer: authorize
+  updateFamilyDetails:
+    handler: src/functions/updateFamilyDetails.updateFamilyDetails
     events:
       - http:
           method: put
-          cors: true
-          path: "/user"
+          # cors: true
+          path: /family
+          authorizer: authorize 
+          # request:
+          #   passThrough: NEVER
+          #   schema:
+          #     application/json: "$(file(src/schema/update_family_details.json))"
   deleteUser:
     handler: src/functions/deleteUser.deleteUser
     events:
       - http:
           method: delete
-          cors: true
-          path: "/user"
+          # cors: true
+          path: /user
+          authorizer: authorize 
 
 
 resources:
   Resources:
-    userTable:
+    nouriTable:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain
       Properties:
         TableName: "${self:provider.environment.DYNAMODB_TABLE}"
         AttributeDefinitions:
-            - AttributeName: "city"
-              AttributeType: "S"
-            - AttributeName: "username"
-              AttributeType: "S" 
+            - AttributeName: chapter
+              AttributeType: S
+            - AttributeName: docSort
+              AttributeType: S
         KeySchema:
-            - AttributeName: "city"
-              KeyType: "HASH"
-            - AttributeName: "username"
-              KeyType: "RANGE"
+            - AttributeName: chapter
+              KeyType: HASH
+            - AttributeName: docSort
+              KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

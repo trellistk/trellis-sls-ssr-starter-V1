@@ -1,14 +1,16 @@
 'use strict'
 
+// TODO ensure sanitization of PII
 const maskObj = (obj) => {
-  const newObj = {...obj}
-  if (
-    newObj.data &&
-    newObj.data.password
-  ) newObj.data.password = '***'
+  const newObj = { ...obj }
   return newObj
 }
 
+/**
+ * @description Helper for structured logging.
+ * @param {*} param
+ * param.sequence = the name of the sequence that will run.
+ */
 module.exports = ({
   sequence
 }) => {
@@ -16,13 +18,14 @@ module.exports = ({
     sequence: sequence,
     step: null,
     userid: null,
+    chapter: null,
     data: {}
   }
   return {
     logInfo: (step, data) => {
       info.data = data
       info.step = step
-      console.log('INFO:', maskObj(info))
+      console.info('INFO:', maskObj(info))
     },
     logError: (step, data) => {
       info.data = data

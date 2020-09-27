@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+
+  "type": "object",
+
+  "title": "Create User Schema",
+
+  "properties": {
+    "chapter": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    },
+    "fname": {
+      "type": "string"
+    },
+    "lname": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "street1": {
+      "type": "string"
+    },
+    "street2": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "zip": {
+      "type": "string"
+    },
+    "totalHouseholdIncome": {
+      "type": "integer"
+    },
+    "communityAlias": {
+      "type": "integer"
+    },
+    "deliveryNotes": {
+      "type": "integer"
+    }
+  },
+
+  "required": [
+    "chapter",
+    "email",
+    "password",
+    "fname",
+    "lname",
+    "phone",
+    "street1",
+    "street2",
+    "city",
+    "state",
+    "zip",
+    "totalHouseholdIncome"
+  ]
+}
