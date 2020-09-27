@@ -1,14 +1,18 @@
 'use strict'
 
+require('dotenv').config()
+
+const API_DOMAIN_LOCAL = process.env.API_DOMAIN_LOCAL
+
 const test = require('tape')
-const offline = require('./test-utils/offline')
+const offline = require('../test-utils/offline')
 const fetch = require('node-fetch')
-const { userFactory } = require('./test-utils/data_factories')
+const { userFactory } = require('../test-utils/data_factories')
 
 test('Happy path signing up a new user', async t => {
   await offline.start()
 
-  const res = await fetch('http://localhost:3000/dev/signup', {
+  const res = await fetch(`${API_DOMAIN_LOCAL}/signup`, {
     method: 'POST',
     body: JSON.stringify(userFactory.correct)
   })
@@ -25,12 +29,12 @@ test('Happy path signing up a new user', async t => {
 test('Should not allow signup with non-unique username', async t => {
   await offline.start()
 
-  await fetch('http://localhost:3000/dev/signup', {
+  await fetch(`${API_DOMAIN_LOCAL}/signup`, {
     method: 'POST',
     body: JSON.stringify(userFactory.correct)
   })
 
-  const res2 = await fetch('http://localhost:3000/dev/signup', {
+  const res2 = await fetch(`${API_DOMAIN_LOCAL}/signup`, {
     method: 'POST',
     body: JSON.stringify(userFactory.correct)
   })

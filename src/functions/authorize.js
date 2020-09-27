@@ -18,9 +18,10 @@ module.exports.authorize = async (event, context) => {
   })
 
   const authorizerToken = event.authorizationToken
+
   const authorizerArr = authorizerToken.split(' ')
   const token = authorizerArr[1]
-  logInfo('STEP_GET_TOKEN', token)
+  logInfo('STEP_GET_TOKEN')
 
   if (authorizerArr.length !== 2 ||
       authorizerArr[0] !== 'Bearer' ||
@@ -29,16 +30,24 @@ module.exports.authorize = async (event, context) => {
     return generatePolicy('undefined', 'Deny', event.methodArn)
   }
 
-  const { key: jwtSecretKey, err: getSecretErr } = await getSecret('/NouriServerless/jwtSecretKey/dev')
+  const { key: jwtSecretKey, error: getSecretErr } = await getSecret('/NouriServerless/jwtSecretKey/dev')
   if (getSecretErr) {
     logError('Error retrieving secret key', getSecretErr)
     return generatePolicy('undefined', 'Deny', event.methodArn)
   }
 
+  let decoded
+  try {
+    decoded = jwt.verify(token, jwtSecretKey)
+  } catch (error) {
+    logError('JWT ERROR', error)
+    return generatePolicy('undefined', 'Deny', event.methodArn)
+  }
+
   const {
-    email,
-    chapter
-  } = jwt.verify(token, jwtSecretKey)
+    chapter, email
+  } = decoded
+
   logInfo('STEP_DECODE_JWT_COMPLETE')
 
   const family = `family:${email}`
@@ -50,6 +59,8 @@ module.exports.authorize = async (event, context) => {
     return generatePolicy('undefined', 'Deny', event.methodArn)
   }
 
+  const principalId = `${chapter}|family:${email}`
+
   logInfo('STEP_USER_AUTHORIZED', dbError)
-  return generatePolicy(chapter, 'Allow', event.methodArn)
+  return generatePolicy(principalId, 'Allow', event.methodArn)
 }

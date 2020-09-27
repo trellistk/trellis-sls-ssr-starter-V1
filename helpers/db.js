@@ -9,16 +9,16 @@ const TableName = process.env.DYNAMODB_TABLE
  */
 module.exports.createDocument = async ({
   chapter, // primary key/chapter name
-  documentSort, // sort key/document type
+  docSort, // sort key/document type
   attributes // other attributes
 }) => {
-  attributes.chapterState = chapter
-  attributes.chapterDocument = documentSort
+  attributes.chapter = chapter
+  attributes.docSort = docSort
 
   const params = {
     TableName,
     Item: { ...attributes },
-    ConditionExpression: 'attribute_not_exists(chapterDocument)'
+    ConditionExpression: 'attribute_not_exists(docSort)'
   }
 
   try {
@@ -30,13 +30,13 @@ module.exports.createDocument = async ({
 }
 
 // TODO Implement
-module.exports.queryDeliveryList = async (partitionKey, city, deliveryDay) => {
+module.exports.queryDeliveryList = async (docSort, city, deliveryDay) => {
   const params = {
     TableName,
-    KeyConditionExpression: 'chapterState = :chapterState',
+    KeyConditionExpression: 'chapter = :chapter',
     FilterExpression: 'address.city = :city AND deliveryDay = :deliveryDay',
     ExpressionAttributeValues: {
-      ':chapterState': partitionKey,
+      ':chapter': docSort,
       ':city': city,
       ':deliveryDay': deliveryDay
     }
@@ -54,12 +54,12 @@ module.exports.queryDeliveryList = async (partitionKey, city, deliveryDay) => {
  * @param {*} chapter
  * @param {*} sortKey
  */
-module.exports.getDocument = async (chapter, sortKey) => {
+module.exports.getDocument = async (chapter, docSort) => {
   const params = {
     TableName,
     Key: {
-      chapterState: chapter,
-      chapterDocument: sortKey
+      chapter,
+      docSort
     }
   }
 
@@ -131,16 +131,16 @@ const updateUserCleanObj = updateData => {
  * @param {*} sortKey
  * @param {*} attributes
  */
-module.exports.updateFamilyDocument = async (chapter, sortKey, attributes) => {
+module.exports.updateFamilyDocument = async (chapter, docSort, attributes) => {
   const processedExpression = updateUserExpressionHelper(attributes)
 
   const params = {
     TableName,
     Key: {
-      chapterState: chapter,
-      chapterDocument: sortKey
+      chapter,
+      docSort
     },
-    ConditionExpression: 'attribute_exists(chapterDocument)',
+    ConditionExpression: 'attribute_exists(docSort)',
     UpdateExpression: processedExpression.UpdateExpression,
     ExpressionAttributeValues: processedExpression.ExpressionAttributeValues,
     ExpressionAttributeNames: processedExpression.ExpressionAttributeNames,

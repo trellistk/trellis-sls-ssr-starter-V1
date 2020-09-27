@@ -1,54 +1,42 @@
 {
-  "definitions": {},
-  "$schema": "",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+
   "type": "object",
-  "title": "Update User Details Schema",
-  "required": [],
+
+  "title": "Update Family Details Schema",
+
   "properties": {
     "fname": {
-      "title": "fname",
       "type": "string"
     },
     "lname": {
-      "title": "lname",
       "type": "string"
     },
     "phone": {
-      "title": "phone",
       "type": "string"
     },
     "street1": {
-      "title": "street1",
       "type": "string"
     },
     "street2": {
-      "title": "street2",
       "type": "string"
     },
     "city": {
-      "title": "city",
       "type": "string"
     },
     "state": {
-      "title": "password",
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 2
+      "type": "string"
     },
     "zip": {
-      "title": "zip",
       "type": "string"
     },
     "totalHouseholdIncome": {
-      "title": "totalHouseholdIncome",
       "type": "integer"
     },
     "communityAlias": {
-      "title": "communityAlias",
       "type": "integer"
     },
     "deliveryNotes": {
-      "title": "deliveryNotes",
       "type": "integer"
     }
   }

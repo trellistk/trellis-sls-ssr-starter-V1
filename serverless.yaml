@@ -1,6 +1,8 @@
 service: NouriMeals-API
 
-frameworkVersion: ">=1.1.0 <2.0.0"
+# Reference: https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
+
+frameworkVersion: ">=2.3.0"
 
 plugins:
   - serverless-dynamodb-local
@@ -46,34 +48,35 @@ provider:
 functions:
   authorize:
     handler: src/functions/authorize.authorize
-  createUser:
+  signUp:
     handler: src/functions/signUp.signUp
     events:
       - http:
           method: post
-          cors: true
+          # cors: true
           path: /signup
-          request:
-            passThrough: NEVER
-            schema:
-              application/json: "$(file(src/schema/create_user.json))"
+          # TODO: Fix schema validation
+          # request:
+          #   passThrough: NEVER
+          #   schema:
+          #     application/json: "$(file(src/schema/create_user.json))"
   login:
     handler: src/functions/login.login
     events:
       - http:
           method: post
-          cors: true
+          # cors: true
           path: /login
-          request:
-            passThrough: NEVER
-            schema:
-              application/json: "$(file(src/schema/login.json))"
+          # request:
+          #   passThrough: NEVER
+          #   schema:
+          #     application/json: "$(file(src/schema/login.json))"
   getAllUsers:
     handler: src/functions/getAllUsers.getAllUsers
     events:
       - http:
           method: get
-          cors: true
+          # cors: true
           path: /users
           authorizer: authorize        
   getFamilyDetails:
@@ -81,7 +84,7 @@ functions:
     events:
       - http:
           method: get
-          cors: true
+          # cors: true
           path: /family
           authorizer: authorize
   updateFamilyDetails:
@@ -89,39 +92,39 @@ functions:
     events:
       - http:
           method: put
-          cors: true
+          # cors: true
           path: /family
           authorizer: authorize 
-          request:
-            passThrough: NEVER
-            schema:
-              application/json: "$(file(src/schema/update_family_details.json))"
+          # request:
+          #   passThrough: NEVER
+          #   schema:
+          #     application/json: "$(file(src/schema/update_family_details.json))"
   deleteUser:
     handler: src/functions/deleteUser.deleteUser
     events:
       - http:
           method: delete
-          cors: true
+          # cors: true
           path: /user
           authorizer: authorize 
 
 
 resources:
   Resources:
-    userTable:
+    nouriTable:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain
       Properties:
         TableName: "${self:provider.environment.DYNAMODB_TABLE}"
         AttributeDefinitions:
-            - AttributeName: chapterState
+            - AttributeName: chapter
               AttributeType: S
-            - AttributeName: chapterDocument
+            - AttributeName: docSort
               AttributeType: S
         KeySchema:
-            - AttributeName: chapterState
+            - AttributeName: chapter
               KeyType: HASH
-            - AttributeName: chapterDocument
+            - AttributeName: docSort
               KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1

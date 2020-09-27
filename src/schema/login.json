@@ -1,29 +1,25 @@
 {
-  "definitions": {},
-  "$schema": "",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  
   "type": "object",
+
   "title": "Login User schema",
+
   "required": [
     "email",
     "password",
     "chapter"
   ],
+
   "properties": {
     "chapter": {
-      "type": "string",
-      "title": "chapter"
+      "type": "string"
     },
     "email": {
-      "type": "string",
-      "title": "email",
-      "minLength": 3,
-      "maxLength": 30
+      "type": "string"
     },
     "password": {
-      "title": "password",
-      "type": "string",
-      "minLength": 7,
-      "maxLength": 30
+      "type": "string"
     }
   }
 }

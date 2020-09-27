@@ -24,22 +24,19 @@ module.exports.getFamilyDetails = async (event, context) => {
   const {
     requestContext: {
       authorizer: {
-        claims: {
-          email
-        },
-        principalId: chapter
+        principalId
       }
     }
   } = event
 
+  const [ chapter, docSort ] = principalId.split('|')
+
   logInfo(sequence.STEP_GET_USER_AUTHORIZER_DATA_FOUND)
 
   logAdd('chapter', chapter)
-  logAdd('userid', email)
+  logAdd('userid', docSort)
 
-  const family = `family:${email}`
-
-  const { Item: user, error: dbError } = await getDocument(chapter, family)
+  const { Item: user, error: dbError } = await getDocument(chapter, docSort)
   logInfo('STEP_GET_USER_COMPLETE', user)
 
   if (dbError) {

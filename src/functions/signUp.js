@@ -57,7 +57,7 @@ module.exports.signUp = async (event, context) => {
 
   const document = {
     chapter,
-    documentSort: `family:${email}`,
+    docSort: `family:${email}`,
     attributes: {
       email,
       fname,

@@ -1,19 +1,23 @@
 'use strict'
 
+require('dotenv').config()
+
+const API_DOMAIN_LOCAL = process.env.API_DOMAIN_LOCAL
+
 const test = require('tape')
-const offline = require('./test-utils/offline')
+const offline = require('../test-utils/offline')
 const fetch = require('node-fetch')
-const { userFactory } = require('./test-utils/data_factories')
+const { userFactory } = require('../test-utils/data_factories')
 
 test('Happy path Logging a user in', async t => {
   await offline.start()
 
-  await fetch('http://localhost:3000/dev/signup', {
+  await fetch(`${API_DOMAIN_LOCAL}/signup`, {
     method: 'POST',
     body: JSON.stringify(userFactory.correct)
   })
 
-  const res2 = await fetch('http://localhost:3000/dev/login', {
+  const res2 = await fetch(`${API_DOMAIN_LOCAL}/login`, {
     method: 'POST',
     body: JSON.stringify({
       email: userFactory.correct.email,
@@ -34,17 +38,17 @@ test('Happy path Logging a user in', async t => {
 test('Should not log in a user with incorrect username', async t => {
   await offline.start()
 
-  await fetch('http://localhost:3000/dev/signup', {
+  await fetch(`${API_DOMAIN_LOCAL}/signup`, {
     method: 'POST',
     body: JSON.stringify(userFactory.correct)
   })
 
-  const loginRes = await fetch('http://localhost:3000/dev/login', {
+  const loginRes = await fetch(`${API_DOMAIN_LOCAL}/login`, {
     method: 'POST',
     body: JSON.stringify({
       email: 'badusername1',
       password: userFactory.correct.password,
-      chapterState: userFactory.correct.chapter
+      chapter: userFactory.correct.chapter
     })
   })
   const json = await loginRes.json()
@@ -59,12 +63,12 @@ test('Should not log in a user with incorrect username', async t => {
 test('Should not log in a user with incorrect password', async t => {
   await offline.start()
 
-  await fetch('http://localhost:3000/dev/signup', {
+  await fetch(`${API_DOMAIN_LOCAL}/signup`, {
     method: 'POST',
     body: JSON.stringify(userFactory.correct)
   })
 
-  const loginRes = await fetch('http://localhost:3000/dev/login', {
+  const loginRes = await fetch(`${API_DOMAIN_LOCAL}/login`, {
     method: 'POST',
     body: JSON.stringify({
       email: userFactory.correct.email,

@@ -7,7 +7,7 @@ DynamoDB best practices would only need one table for all of our needs. This is 
 ## Overview
 | Primary Key or Hash | Sort Key or Range | Other Attributes |
 | ------------- | ------------- | ----- |
-| chapterState | chapterDocument | details|
+| chapter       | docSort       | details|
 
 ## Overview, second layer of detail
 | Primary Key or Hash | Sort/Range      | Other Attributes |

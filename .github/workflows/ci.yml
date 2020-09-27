@@ -12,6 +12,13 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v1
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SCRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
     
     - name: Install API Dependencies
       run: npm i
@@ -23,6 +30,13 @@ jobs:
 
     - name: Check lint
       run: npm run lint
+
+    - name: Deploy API to Dev for endpoint testing
+      run: npm run deploy:dev
+
+    - name: Run end to end tests
+      run: npm run test:e2e
+      
 
 
     

@@ -29,18 +29,15 @@ module.exports.updateFamilyDetails = async (event, context) => {
     body,
     requestContext: {
       authorizer: {
-        claims: {
-          email
-        },
-        principalId: chapterState
+        principalId
       }
     }
   } = event
 
-  const family = `family:${email}`
+  const [ chapter, docSort ] = principalId.split('|')
 
-  logAdd('userid', family)
-  logAdd('chapter', chapterState)
+  logAdd('userid', docSort)
+  logAdd('chapter', chapter)
   logInfo(sequence.STEP_FOUND_USER_DATA)
 
   const {
@@ -76,7 +73,7 @@ module.exports.updateFamilyDetails = async (event, context) => {
   const {
     info: updated,
     error: dbError
-  } = await updateFamilyDocument(chapterState, family, updateItems)
+  } = await updateFamilyDocument(chapter, docSort, updateItems)
   if (dbError) {
     logError(sequence.ERROR_UPDATING_USER_INFO, dbError)
     httpError(400, 'Error with Update')

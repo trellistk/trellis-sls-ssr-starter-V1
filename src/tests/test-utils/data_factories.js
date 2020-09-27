@@ -9,13 +9,13 @@ module.exports.userFactory = {
     lname: 'doe',
     phone: '1234567890',
     street1: '123 main st apt 7',
-    street2: undefined,
+    // street2: null,
     city: 'seattle',
     state: 'wa',
     zip: '98119',
     totalHouseholdIncome: 1500,
-    communityAlias: undefined,
-    deliveryNotes: undefined
+    // communityAlias: null,
+    // deliveryNotes: null
   },
   correctUpdate: {
     fname: 'janie',

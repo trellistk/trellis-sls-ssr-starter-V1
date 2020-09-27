@@ -5,12 +5,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "standard",
-    "test": "tape 'src/tests/*.js'",
-    "test:signup": "tape 'src/tests/signUp.test.js'",
-    "test:login": "tape 'src/tests/login.test.js'",
-    "test:getuser": "tape 'src/tests/getUser.test.js'",
-    "test:updateuser": "tape 'src/tests/updateUser.test.js'",
-    "deploy:dev": "sls deploy",
+    "test:local": "tape 'src/tests/local/*.js' | tap-diff",
+    "test:e2e": "tape 'src/tests/e2e/*.js' | tap-diff",
+    "deploy:dev": "sls package --stage dev && sls deploy --package .serverless --stage dev --force",
     "start:local": "IS_OFFLINE=true sls offline start"
   },
   "repository": {
@@ -27,18 +24,20 @@
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "argon2": "^0.26.2",
-    "aws-sdk": "^2.677.0",
+    "aws-sdk": "^2.761.0",
     "bcryptjs": "^2.4.3",
     "bufferutil": "^4.0.1",
+    "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
-    "serverless": "^1.83.0",
+    "serverless": "^2.3.0",
     "utf-8-validate": "^5.0.2"
   },
   "devDependencies": {
     "node-fetch": "^2.6.1",
     "serverless-dynamodb-local": "^0.2.39",
-    "serverless-offline": "^6.3.1",
+    "serverless-offline": "^6.8.0",
     "standard": "^14.3.4",
+    "tap-diff": "^0.1.1",
     "tape": "^5.0.1"
   }
 }
