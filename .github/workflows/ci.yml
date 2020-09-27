@@ -39,8 +39,3 @@ jobs:
       env:
         API_DOMAIN_DEV: ${{ secrets.API_DOMAIN_DEV }}
         TABLE_DEV: ${{ secrets.TABLE_DEV }}
-
-      
-
-
-    
