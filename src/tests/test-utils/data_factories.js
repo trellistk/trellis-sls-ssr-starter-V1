@@ -13,7 +13,7 @@ module.exports.userFactory = {
     city: 'seattle',
     state: 'wa',
     zip: '98119',
-    totalHouseholdIncome: 1500,
+    totalHouseholdIncome: 1500
     // communityAlias: null,
     // deliveryNotes: null
   },

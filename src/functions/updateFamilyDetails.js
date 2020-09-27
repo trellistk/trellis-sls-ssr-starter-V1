@@ -34,7 +34,7 @@ module.exports.updateFamilyDetails = async (event, context) => {
     }
   } = event
 
-  const [ chapter, docSort ] = principalId.split('|')
+  const [chapter, docSort] = principalId.split('|')
 
   logAdd('userid', docSort)
   logAdd('chapter', chapter)

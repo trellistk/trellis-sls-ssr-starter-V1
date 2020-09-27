@@ -29,7 +29,7 @@ module.exports.getFamilyDetails = async (event, context) => {
     }
   } = event
 
-  const [ chapter, docSort ] = principalId.split('|')
+  const [chapter, docSort] = principalId.split('|')
 
   logInfo(sequence.STEP_GET_USER_AUTHORIZER_DATA_FOUND)
 
