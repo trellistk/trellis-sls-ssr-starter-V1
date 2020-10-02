@@ -100,6 +100,14 @@ functions:
           #   passThrough: NEVER
           #   schema:
           #     application/json: "$(file(src/schema/update_family_details.json))"
+  updatePassword:
+    handler: src/functions/updatePassword.updatePassword
+    events:
+      - http:
+          method: put
+          # cors: true
+          path: /family/password
+          authorizer: authorize 
   deleteUser:
     handler: src/functions/deleteUser.deleteUser
     events:
