@@ -37,11 +37,7 @@ jobs:
       run: sls dynamodb install --conceal
 
     - name: Package for prod
-      uses: serverless/github-action@master
-      with:
-        args: package --stage prod
+      run: sls package --stage prod
 
     - name: Deploy to prod
-      uses: serverless/github-action@master
-      with:
-        args: deploy --package .serverless --stage prod --force
+      run: sls deploy --package .serverless --stage prod --force
