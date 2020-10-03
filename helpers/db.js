@@ -185,23 +185,3 @@ module.exports.updateUserPassword = async (chapter, docSort, attributes) => {
     return { error }
   }
 }
-
-module.exports.deleteDocument = async (chapter, docSort) => {
-  const params = {
-    TableName,
-    Key: {
-      chapter,
-      docSort
-    },
-    ReturnValues: 'ALL_OLD'
-  }
-
-  try {
-    const { Attributes: deletedInfo } = await db.delete(params).promise()
-    return {
-      info: updateUserCleanObj(deletedInfo)
-    }
-  } catch (error) {
-    return { error }
-  }
-}

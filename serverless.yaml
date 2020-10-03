@@ -117,14 +117,6 @@ functions:
           # cors: true
           path: /reset
           authorizer: authorize 
-  deleteUser:
-    handler: src/functions/deleteUser.deleteUser
-    events:
-      - http:
-          method: delete
-          # cors: true
-          path: /user
-          authorizer: authorize 
 
 
 resources:
