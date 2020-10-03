@@ -114,4 +114,4 @@ module.exports.updatePassword = async (event, context) => {
   return httpResponse(200, 'User password updated successfully!', updated)
 }
 
-//TODO Work on better password validation with @hapi/joi.
+// TODO Work on better password validation with @hapi/joi.

@@ -44,4 +44,4 @@ test("Update a user's password in the database", async t => {
   t.end()
 })
 
-//TODO Add validation tests.
+// TODO Add validation tests.
