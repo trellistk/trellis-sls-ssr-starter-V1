@@ -76,12 +76,9 @@ module.exports.getDocument = async (chapter, docSort) => {
   }
 }
 
-// TODO Method for updating just the username and password.
-// NOTE: will likely need to delete old entry and re-add the new entry.
-
 /**
- * @description Helper. Filters builds the attributes
- * and help us get around reserved keywords
+ * @description Helper. Filter and builds the attributes
+ * to help us get around reserved keywords
  * @param {*} userInfo
  */
 const updateUserExpressionHelper = userInfo => {
@@ -183,6 +180,26 @@ module.exports.updateUserPassword = async (chapter, docSort, attributes) => {
     const { Attributes: updatedInfo } = await db.update(params).promise()
     return {
       info: updateUserCleanObj(updatedInfo)
+    }
+  } catch (error) {
+    return { error }
+  }
+}
+
+module.exports.deleteDocument = async (chapter, docSort) => {
+  const params = {
+    TableName,
+    Key: {
+      chapter,
+      docSort
+    },
+    ReturnValues: 'ALL_OLD'
+  }
+
+  try {
+    const { Attributes: deletedInfo } = await db.delete(params).promise()
+    return {
+      info: updateUserCleanObj(deletedInfo)
     }
   } catch (error) {
     return { error }
