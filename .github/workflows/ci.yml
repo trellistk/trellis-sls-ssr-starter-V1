@@ -13,6 +13,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v1
 
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -22,11 +26,15 @@ jobs:
     
     - name: Install API Dependencies
       run: npm i
-    
+
+    - name: Install Serverless Globally
+      run: npm i -g serverless
+
+    - name: Serverless AWS authentication
+      run: sls config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
     - name: Install Serverless dependencies
-      uses: serverless/github-action@master
-      with:
-        args: dynamodb install --conceal
+      run: sls dynamodb install --conceal
 
     - name: Check lint
       run: npm run lint
