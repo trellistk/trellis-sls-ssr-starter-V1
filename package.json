@@ -6,7 +6,6 @@
   "scripts": {
     "lint": "standard",
     "test:local": "tape 'src/tests/local/*.js' | tap-diff",
-    "test:password": "tape 'src/tests/local/updatePassword.test.js' | tap-diff",
     "test:e2e": "tape 'src/tests/e2e/*.js' | tap-diff",
     "deploy:dev": "sls package --stage dev && sls deploy --package .serverless --stage dev --force",
     "start:local": "IS_OFFLINE=true sls offline start"
