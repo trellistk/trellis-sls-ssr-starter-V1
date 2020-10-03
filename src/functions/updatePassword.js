@@ -2,13 +2,14 @@
 
 const bcrypt = require('bcryptjs')
 const { httpResponse, httpError } = require('../../helpers/response')
-const { updateFamilyDocument, getDocument } = require('../../helpers/db')
+const { updateUserPassword, getDocument } = require('../../helpers/db')
 const logger = require('../../helpers/logger')
 
 const sequence = {
   START_UPDATE_PASSWORD_SEQUENCE: 'START_UPDATE_PASSWORD_SEQUENCE',
   STEP_FOUND_USER_AUTH: 'STEP_FOUND_USER_AUTH',
   STEP_FOUND_REQUEST_DATA: 'STEP_FOUND_REQUEST_DATA',
+  ERROR_INVALID_NEW_PASSWORD: 'ERROR_INVALID_NEW_PASSWORD',
   ERROR_NEW_PASSWORDS_DONT_MATCH: 'ERROR_NEW_PASSWORDS_DONT_MATCH',
   STEP_RETRIEVED_USER_DATA: 'STEP_RETRIEVED_USER_DATA',
   ERROR_RETRIEVING_USER_DATA: 'ERROR_RETRIEVING_USER_DATA',
@@ -25,7 +26,7 @@ const sequence = {
  * @param {*} event
  * @param {*} context
  */
-export async function updatePassword(event, context) {
+module.exports.updatePassword = async (event, context) => {
   const { logInfo, logError, logAdd } = logger({
     sequence: 'SEQUENCE_UPDATE_PASSWORD'
   })
@@ -41,9 +42,9 @@ export async function updatePassword(event, context) {
     }
   } = event
 
-  const [chapter, family] = principalId.split('|')
+  const [chapter, userID] = principalId.split('|')
 
-  logAdd('userid', family)
+  logAdd('userid', userID)
   logAdd('chapter', chapter)
   logInfo(sequence.STEP_FOUND_USER_AUTH)
 
@@ -55,16 +56,20 @@ export async function updatePassword(event, context) {
 
   logInfo(sequence.STEP_FOUND_REQUEST_DATA)
 
-  if (newPassword1 !== newPassword2) {
-    logError(sequence.ERROR_NEW_PASSWORDS_DONT_MATCH, `${newPassword1} and ${newPassword2}`)
-    return httpError(400, "New passwords don't match.")
+  if ((newPassword1 === '') || (newPassword1.length < 5)) {
+    logError(sequence.ERROR_INVALID_NEW_PASSWORD, newPassword1)
   }
 
-  const { data: userData, error: dbError } = await getDocument(chapter, family)
+  if (newPassword1 !== newPassword2) {
+    logError(sequence.ERROR_NEW_PASSWORDS_DONT_MATCH, `${newPassword1} and ${newPassword2}`)
+    return httpError(400, "New passwords don't match")
+  }
 
-  if (dbError) {
-    logError(sequence.ERROR_RETRIEVING_USER_DATA, dbError)
-    return httpError(403, 'Forbidden')
+  const { data: userData, error: dbGetError } = await getDocument(chapter, userID)
+
+  if (dbGetError) {
+    logError(sequence.ERROR_RETRIEVING_USER_DATA, dbGetError)
+    return httpError(500, 'Error retrieving user data')
   }
 
   logInfo(sequence.STEP_RETRIEVED_USER_DATA)
@@ -91,20 +96,22 @@ export async function updatePassword(event, context) {
     newHashedPassword = await bcrypt.hashSync(newPassword1, 10)
   } catch (e) {
     logError(sequence.ERROR_HASHING_PASSWORD, e)
-    return httpError(400, 'Signup Error')
+    return httpError(502, 'Hashing Error')
   }
 
   const updateItem = { password: newHashedPassword }
 
   const {
     info: updated,
-    error: dbError
-  } = await updateFamilyDocument(chapter, family, updateItem)
-  if (dbError) {
-    logError(sequence.ERROR_UPDATING_PASSWORD, dbError)
-    httpError(400, 'Error with Update')
+    error: dbUpdateError
+  } = await updateUserPassword(chapter, userID, updateItem)
+  if (dbUpdateError) {
+    logError(sequence.ERROR_UPDATING_PASSWORD, dbUpdateError)
+    httpError(500, 'Error with update')
   }
 
   logInfo(sequence.STEP_UPDATE_PASSWORD_RESPONSE)
   return httpResponse(200, 'User password updated successfully!', updated)
 }
+
+//TODO Work on better password validation with @hapi/joi.

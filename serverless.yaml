@@ -3,7 +3,6 @@ service: NouriMeals-API
 # Reference: https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
 
 frameworkVersion: "2"
-enableLocalInstallationFallback: true
 
 plugins:
   - serverless-dynamodb-local
@@ -106,7 +105,7 @@ functions:
       - http:
           method: put
           # cors: true
-          path: /family/password
+          path: /reset
           authorizer: authorize 
   deleteUser:
     handler: src/functions/deleteUser.deleteUser
