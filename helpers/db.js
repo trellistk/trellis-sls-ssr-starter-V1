@@ -156,3 +156,35 @@ module.exports.updateFamilyDocument = async (chapter, docSort, attributes) => {
     return { error }
   }
 }
+
+/**
+ * @description Updates a user's login password.
+ * @param {*} chapter
+ * @param {*} sortKey
+ * @param {*} attributes
+ */
+module.exports.updateUserPassword = async (chapter, docSort, attributes) => {
+  const processedExpression = updateUserExpressionHelper(attributes)
+
+  const params = {
+    TableName,
+    Key: {
+      chapter,
+      docSort
+    },
+    ConditionExpression: 'attribute_exists(docSort)',
+    UpdateExpression: processedExpression.UpdateExpression,
+    ExpressionAttributeValues: processedExpression.ExpressionAttributeValues,
+    ExpressionAttributeNames: processedExpression.ExpressionAttributeNames,
+    ReturnValues: 'NONE'
+  }
+
+  try {
+    const { Attributes: updatedInfo } = await db.update(params).promise()
+    return {
+      info: updateUserCleanObj(updatedInfo)
+    }
+  } catch (error) {
+    return { error }
+  }
+}

@@ -26,5 +26,10 @@ module.exports.userFactory = {
     state: 'wa',
     zip: '98000',
     totalHouseholdIncome: 2000
+  },
+  passwordUpdate: {
+    oldPassword: '123password&23845',
+    newPassword1: 'simple123!!',
+    newPassword2: 'simple123!!'
   }
 }
