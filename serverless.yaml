@@ -3,6 +3,7 @@ service: NouriMeals-API
 # Reference: https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
 
 frameworkVersion: "2"
+enableLocalinstallationFallback: true
 
 plugins:
   - serverless-dynamodb-local
