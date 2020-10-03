@@ -31,5 +31,18 @@ module.exports.userFactory = {
     oldPassword: '123password&23845',
     newPassword1: 'simple123!!',
     newPassword2: 'simple123!!'
+  },
+  admin: {
+    chapter: 'seattle-eastside',
+    email: 'john@deer.com',
+    password: '123password&23845',
+    fname: 'john',
+    lname: 'deer',
+    phone: '1234567890',
+    street1: '123 main st apt 7',
+    // street2: null,
+    city: 'seattle',
+    state: 'wa',
+    zip: '98119'
   }
 }
