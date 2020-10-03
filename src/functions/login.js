@@ -44,7 +44,7 @@ module.exports.login = async (event, context) => {
     return httpError(403, 'Forbidden')
   }
 
-  logInfo(sequence.STEP_LOGIN_RETRIEVED_USER_DATA)
+  logInfo(sequence.STEP_LOGIN_RETRIEVED_USER_DATA, userData)
 
   const {
     password: hashedPassword,

@@ -6,7 +6,8 @@ const logger = require('../../helpers/logger')
 
 const sequence = {
   START_GET_USER_SEQUENCE: 'START_GET_USER_SEQUENCE',
-  STEP_GET_USER_AUTHORIZER_DATA_FOUND: 'STEP_GET_USER_AUTHORIZER_DATA_FOUND'
+  STEP_GET_USER_AUTHORIZER_DATA_FOUND: 'STEP_GET_USER_AUTHORIZER_DATA_FOUND',
+  STEP_GET_USER_COMPLETE: 'STEP_GET_USER_COMPLETE'
 }
 
 /**
@@ -36,8 +37,8 @@ module.exports.getFamilyDetails = async (event, context) => {
   logAdd('chapter', chapter)
   logAdd('userid', docSort)
 
-  const { Item: user, error: dbError } = await getDocument(chapter, docSort)
-  logInfo('STEP_GET_USER_COMPLETE', user)
+  const { data: user, error: dbError } = await getDocument(chapter, docSort)
+  logInfo(sequence.STEP_GET_USER_COMPLETE, user)
 
   if (dbError) {
     logError('STEP_GET_USER_ERROR', dbError)
