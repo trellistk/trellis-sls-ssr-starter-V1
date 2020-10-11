@@ -1,7 +1,7 @@
 'use strict'
 
 const { httpError } = require('../../helpers/response')
-const { createDocument, getDocument } = require('../../helpers/db')
+const { createDocument, getDocument, sendVerificationEmail } = require('../../helpers/db')
 const logger = require('../../helpers/logger')
 
 const sequence = {
@@ -109,6 +109,13 @@ module.exports.updateEmail = async (event, context) => {
   }
 
   logInfo(sequence.STEP_USER_CREATED, `family:${newEmail}`)
+
+  const { MessageId, error: emailError } = await sendVerificationEmail(newEmail)
+
+  if (emailError) {
+    logError(sequence.ERROR_EMAIL_NOT_SENT, emailError)
+    return httpError(500, 'Error while sending verification email')
+  }
 }
 
 // Send a verification email to their new email with a token that has their old primary and sort keys.
