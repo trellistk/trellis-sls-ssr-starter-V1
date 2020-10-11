@@ -1,20 +1,15 @@
 'use strict'
 
 var aws = require('aws-sdk')
+const jwt = require('jsonwebtoken')
+const { getSecret } = require('../../helpers/getSecret')
 
 module.exports.sendVerificationEmail = async (recipient) => {
+  const { token } = await createToken(recipient)
+
   const sender = 'noreply@teamnouri.org'
 
   const subject = 'Nouri User Account Verification Email'
-
-  const bodyText = `This email is from Nouri, requesting that you verify your email address
-                    in order to access your new account. Upon successful verification, you will be
-                    able to log into your new account. If you requested to update your email,
-                    all of your account information has been used to create this new account, with
-                    the exception of your old email. Please click the following link to verify this
-                    address:
-                    
-                    Some link`
 
   const bodyHtml = `<html>
                     <head></head>
@@ -26,7 +21,7 @@ module.exports.sendVerificationEmail = async (recipient) => {
                       the exception of your old email. Please click the following link to verify this
                       address:"
                       
-                      <a href='Some Link'</a>
+                      <a href=https://nourimeals.org/verify/${token}</a>
                       </p>
                     </body>
                     </html>`
@@ -48,10 +43,6 @@ module.exports.sendVerificationEmail = async (recipient) => {
         Charset: charset
       },
       Body: {
-        Text: {
-          Data: bodyText,
-          Charset: charset 
-        },
         Html: {
           Data: bodyHtml,
           Charset: charset
@@ -66,4 +57,23 @@ module.exports.sendVerificationEmail = async (recipient) => {
   } catch (error) {
     return { error }
   }
+}
+
+function createToken(recipient) {
+  const payload = { recipient }
+
+  const { key: jwtSecretKey, error: getSecretError } = await getSecret('/NouriServerless/jwtSecretKey/dev')
+
+  if (getSecretError) {
+    return { getSecretError }
+  }
+
+  let token
+  try {
+    token = jwt.sign(payload, jwtSecretKey, { expiresIn: '15m' })
+  } catch (error) {
+    return { error }
+  }
+
+  return { token }
 }
