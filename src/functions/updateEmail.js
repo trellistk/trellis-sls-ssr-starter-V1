@@ -59,10 +59,8 @@ module.exports.updateEmail = async (event, context) => {
   const { data: user, error: dbGetError } = await getDocument(chapter, docSort)
   if (dbGetError) {
     logError(sequence.STEP_GET_USER_ERROR, 'STEP_GET_USER_ERROR', dbGetError)
-    return httpError(500, dbGetError)
+    return httpError(500, 'Error trying to retrieve user data')
   }
-
-  logInfo(sequence.STEP_GET_USER_DATA, 'STEP_GET_USER_DATA', user)
 
   const {
     password,
@@ -98,8 +96,6 @@ module.exports.updateEmail = async (event, context) => {
       password
     }
   }
-
-  logInfo(sequence.STEP_DOCUMENT_DATA_COLLECTED, document)
 
   const { error: dbErr } = await createDocument(document)
 
