@@ -1,3 +1,10 @@
+---
+name: Pull Request
+about: Share details about your new code
+title: '[Title]'
+
+---
+
 ## What is the story, issue or feature this Pull Request is solving or implementing?
 
 
@@ -6,7 +13,7 @@
 
 
 
-## What are the changes that this Pull Request is instroducing?
+## What are the changes that this Pull Request is introducing?
 
 
 
