@@ -56,10 +56,10 @@ functions:
           # cors: true
           path: /signup
           # TODO: Fix schema validation
-          # request:
-          #   passThrough: NEVER
-          #   schema:
-          #     application/json: "$(file(src/schema/create_user.json))"
+          request:
+            passThrough: NEVER
+            schema:
+              application/json: "${file(src/schema/create_user.json)}"
   login:
     handler: src/functions/login.login
     events:
@@ -67,10 +67,10 @@ functions:
           method: post
           # cors: true
           path: /login
-          # request:
-          #   passThrough: NEVER
-          #   schema:
-          #     application/json: "$(file(src/schema/login.json))"
+          request:
+            passThrough: NEVER
+            schema:
+              application/json: "${file(src/schema/login.json)}"
   getAllUsers:
     handler: src/functions/getAllUsers.getAllUsers
     events:
@@ -95,10 +95,10 @@ functions:
           # cors: true
           path: /family
           authorizer: authorize 
-          # request:
-          #   passThrough: NEVER
-          #   schema:
-          #     application/json: "$(file(src/schema/update_family_details.json))"
+          request:
+            passThrough: NEVER
+            schema:
+              application/json: "${file(src/schema/update_family_details.json)}"
   updatePassword:
     handler: src/functions/updatePassword.updatePassword
     events:
