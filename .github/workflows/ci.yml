@@ -39,6 +39,12 @@ jobs:
     - name: Check lint
       run: npm run lint
 
+    - name: Test Helpers
+      run: npm run test:helpers
+      env:
+        EMAIL_VERIFICATION_SECRET: ${{ secrets.EMAIL_VERIFICATION_SECRET }}
+        SENDINBLUE_KEY: ${{ secrets.SENDINBLUE_KEY }}
+
     - name: Deploy API to Dev for endpoint testing
       run: npm run deploy:dev
 

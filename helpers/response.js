@@ -26,3 +26,16 @@ module.exports.httpError = (statusCode, message, data) => {
     body: JSON.stringify({ error: message, data })
   }
 }
+
+/**
+ * @description Respond w/ a redirect to a url
+ * @param {string} url url to redirect to
+ */
+module.exports.httpRedirect = url => {
+  return {
+    statusCode: 302,
+    headers: {
+      Location: url
+    }
+  }
+}

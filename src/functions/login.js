@@ -47,7 +47,8 @@ module.exports.login = async (event, context) => {
   logInfo(sequence.STEP_LOGIN_RETRIEVED_USER_DATA)
 
   const {
-    password: hashedPassword
+    password: hashedPassword,
+    email_verified: emailVerified
   } = userData
 
   try {
@@ -63,7 +64,7 @@ module.exports.login = async (event, context) => {
     return httpError(403, 'Forbidden')
   }
 
-  const payload = { email, chapter }
+  const payload = { email, chapter, emailVerified }
 
   const { key: jwtSecretKey, error: getSecretError } = await getSecret('/NouriServerless/jwtSecretKey/dev')
 
@@ -76,7 +77,7 @@ module.exports.login = async (event, context) => {
 
   let token
   try {
-    token = jwt.sign(payload, jwtSecretKey, { expiresIn: '15m' })
+    token = jwt.sign(payload, jwtSecretKey, { expiresIn: '1d' })
   } catch (e) {
     logError(sequence.ERROR_LOGIN_JWT_SIGNING, e)
     return httpError(400, 'LOGIN ERROR')

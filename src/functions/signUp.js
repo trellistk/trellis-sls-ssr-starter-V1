@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs')
 const { httpResponse, httpError } = require('../../helpers/response')
 const { createDocument } = require('../../helpers/db')
 const logger = require('../../helpers/logger')
+const emailHelper = require('../../helpers/email')
 
 const sequence = {
   START_SIGNUP_SEQUENCE: 'START_SIGNUP_SEQUENCE',
@@ -71,7 +72,8 @@ module.exports.signUp = async (event, context) => {
       totalHouseholdIncome,
       deliveryNotes,
       communityAlias,
-      password: hashedPassword
+      password: hashedPassword,
+      email_verified: false
     }
   }
 
@@ -88,7 +90,22 @@ module.exports.signUp = async (event, context) => {
     return httpError(400, sequence.ERROR_CREATING_USER)
   }
 
-  logInfo(sequence.SUCCESS_SIGNUP_USER_SEQUENCE, `family:${email}`)
+  logInfo(sequence.SUCCESS_SIGNUP_USER_SEQUENCE)
+
+  // Send user the verification email
+  const {
+    error: emailError
+  } = await emailHelper.sendVerifyEmail({
+    name: `${fname} ${lname}`,
+    email,
+    type: 'family',
+    chapter
+  })
+
+  // Just log the error for now
+  if (emailError) {
+    logError(sequence.ERROR_SENDING_VERIFICATION_EMAIL)
+  }
 
   return httpResponse(201, 'User successfully created!')
 }

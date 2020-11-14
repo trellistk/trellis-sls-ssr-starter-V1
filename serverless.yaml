@@ -22,6 +22,10 @@ provider:
   region: us-west-2
   environment:
     DYNAMODB_TABLE: "${self:service}-${opt:stage, self:provider.stage}"
+    FE_DOMAIN: http://localhost:3001
+    EMAIL_VERIFICATION_SECRET: ${env:EMAIL_VERIFICATION_SECRET}
+    SENDINBLUE_KEY: ${env:SENDINBLUE_KEY}
+    API_DOMAIN: ${env:API_DOMAIN}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -60,6 +64,12 @@ functions:
             passThrough: NEVER
             schema:
               application/json: "${file(src/schema/create_user.json)}"
+  verifyEmail:
+    handler: src/functions/verifyEmail.verifyEmail
+    events:
+      - http:
+          method: get
+          path: /verify/{token}
   login:
     handler: src/functions/login.login
     events:
