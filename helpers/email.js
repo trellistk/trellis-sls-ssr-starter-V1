@@ -173,7 +173,9 @@ module.exports.verifyEmailToken = async ({
 }
 
 /**
- * @description Use for system emails like email verification.
+ * @description Use for system emails. Not for marketing use.
+ * Use to send notifications, password resets, etc.
+ * as a response to user request.
  * @param {string} subject Email subject
  * @param  {string} htmlContent Html in string
  * @param {array} emailList Array of objects

@@ -13,7 +13,10 @@ const sequence = {
 }
 
 /**
- * @description Signs up a new family. Does NOT handle admin accounts.
+ * @description Takes in verification token after user
+ * has clicked their email to verify their email address.
+ * Updates their account to say that their email has been
+ * verified.
  * @param {*} event
  * @param {*} context
  */
