@@ -5,6 +5,7 @@ service: NouriMeals-API
 frameworkVersion: ">=2.3.0"
 
 plugins:
+  - serverless-dotenv-plugin
   - serverless-dynamodb-local
   - serverless-offline
 custom:
