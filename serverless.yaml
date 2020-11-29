@@ -116,6 +116,14 @@ functions:
           method: put
           # cors: true
           path: /reset
+          authorizer: authorize
+  updateEmail:
+    handler: src/functions/updateEmail.updateEmail
+    events:
+      - http:
+          method: post
+          # cores: true
+          path: /update/email
           authorizer: authorize 
 
 
