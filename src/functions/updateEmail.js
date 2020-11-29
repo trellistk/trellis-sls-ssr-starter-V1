@@ -1,6 +1,6 @@
 'use strict'
 
-const { httpError } = require('../../helpers/response')
+const { httpResponse, httpError } = require('../../helpers/response')
 const { createDocument, getDocument } = require('../../helpers/db')
 const emailHelper = require('../../helpers/email')
 const logger = require('../../helpers/logger')

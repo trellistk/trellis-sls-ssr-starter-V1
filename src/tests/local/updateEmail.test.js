@@ -43,7 +43,7 @@ test('Happy path updating a user email', async t => {
   t.end()
 })
 
-test(`Should not allow email update with old email`, async t => {
+test('Should not allow email update with old email', async t => {
   await offline.start()
 
   await fetch(`${API_DOMAIN_LOCAL}/signup`, {

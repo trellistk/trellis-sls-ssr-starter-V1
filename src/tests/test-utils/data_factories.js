@@ -50,5 +50,5 @@ module.exports.userFactory = {
     totalHouseholdIncome: 1500
     // communityAlias: null,
     // deliveryNotes: null
-  },
+  }
 }

@@ -59,11 +59,10 @@ test('Happy path updating a user email', async t => {
   await directDB.delete(deleteParams).promise()
   await directDB.delete(deleteParams2).promise()
 
-
   t.end()
 })
 
-test(`Should not allow email update with old email`, async t => {
+test('Should not allow email update with old email', async t => {
   await fetch(`${API_DOMAIN_DEV}/signup`, {
     method: 'POST',
     body: JSON.stringify(userFactory.correct)
