@@ -20,7 +20,7 @@ test('Happy path updating a user email', async t => {
     body: JSON.stringify(userFactory.correct)
   })
 
-  await fetch(`${API_DOMAIN_DEV}/login`, {
+  const loginUserRes = await fetch(`${API_DOMAIN_DEV}/login`, {
     method: 'POST',
     body: JSON.stringify({
       email: userFactory.correct.email,
@@ -29,8 +29,12 @@ test('Happy path updating a user email', async t => {
     })
   })
 
+  const loginJson = await loginUserRes.json()
+  const token = loginJson.data
+
   const res = await fetch(`${API_DOMAIN_DEV}/update/email`, {
     method: 'POST',
+    headers: { Authorization: 'Bearer ' + token },
     body: JSON.stringify({
       email: userFactory.emailUpdate.newEmail
     })
@@ -62,13 +66,13 @@ test('Happy path updating a user email', async t => {
   t.end()
 })
 
-test('Should not allow email update with old email', async t => {
+test('Should not allow email update with current email', async t => {
   await fetch(`${API_DOMAIN_DEV}/signup`, {
     method: 'POST',
     body: JSON.stringify(userFactory.correct)
   })
 
-  await fetch(`${API_DOMAIN_DEV}/login`, {
+  const loginUserRes = await fetch(`${API_DOMAIN_DEV}/login`, {
     method: 'POST',
     body: JSON.stringify({
       email: userFactory.correct.email,
@@ -77,8 +81,12 @@ test('Should not allow email update with old email', async t => {
     })
   })
 
+  const loginJson = await loginUserRes.json()
+  const token = loginJson.data
+
   const res = await fetch(`${API_DOMAIN_DEV}/update/email`, {
     method: 'POST',
+    headers: { Authorization: 'Bearer ' + token },
     body: JSON.stringify({
       email: userFactory.correct.email
     })
@@ -88,7 +96,7 @@ test('Should not allow email update with old email', async t => {
   const expectedBody = 'New email cannot match old email'
 
   t.equals(res.status, 400, 'Returns http 400')
-  t.equals(json.message, expectedBody, 'Returns correct response body')
+  t.equals(json.error, expectedBody, 'Returns correct response body')
 
   const deleteParams = {
     TableName: process.env.TABLE_DEV,
@@ -113,7 +121,7 @@ test('Should not allow email update with non-unique new email', async t => {
     body: JSON.stringify(userFactory.correct2)
   })
 
-  await fetch(`${API_DOMAIN_DEV}/login`, {
+  const loginUserRes = await fetch(`${API_DOMAIN_DEV}/login`, {
     method: 'POST',
     body: JSON.stringify({
       email: userFactory.correct.email,
@@ -122,8 +130,12 @@ test('Should not allow email update with non-unique new email', async t => {
     })
   })
 
+  const loginJson = await loginUserRes.json()
+  const token = loginJson.data
+
   const res = await fetch(`${API_DOMAIN_DEV}/update/email`, {
     method: 'POST',
+    headers: { Authorization: 'Bearer ' + token },
     body: JSON.stringify({
       email: userFactory.correct2.email
     })
@@ -133,7 +145,7 @@ test('Should not allow email update with non-unique new email', async t => {
   const expectedBody = 'ERROR_USER_EXISTS'
 
   t.equals(res.status, 403, 'Returns http 403')
-  t.equals(json.message, expectedBody, 'Returns correct response body')
+  t.equals(json.error, expectedBody, 'Returns correct response body')
 
   const deleteParams = {
     TableName: process.env.TABLE_DEV,

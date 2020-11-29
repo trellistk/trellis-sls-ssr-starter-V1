@@ -54,7 +54,7 @@ module.exports.updateEmail = async (event, context) => {
 
   if (newEmail === oldEmail) {
     logError(sequence.ERROR_EMAILS_MATCH)
-    httpError(400, 'New email cannot match old email')
+    return httpError(400, 'New email cannot match old email')
   }
 
   const { data: user, error: dbGetError } = await getDocument(chapter, docSort)
