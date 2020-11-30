@@ -64,9 +64,9 @@ module.exports.getDocument = async (chapter, docSort) => {
   }
 
   try {
-    const { Item: data } = await db.get(params).promise()
+    const { Item: data, error: dbError } = await db.get(params).promise()
 
-    if (!data) {
+    if (!data && !dbError) {
       return { error: 'User not found' }
     }
 

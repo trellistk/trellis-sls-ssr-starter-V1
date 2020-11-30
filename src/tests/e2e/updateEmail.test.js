@@ -34,7 +34,7 @@ test('Happy path updating a user email', async t => {
 
   const res = await fetch(`${API_DOMAIN_DEV}/update/email`, {
     method: 'POST',
-    headers: { Authorization: 'Bearer ' + token },
+    headers: { Authorization: `Bearer ${token}` },
     body: JSON.stringify({
       email: userFactory.emailUpdate.newEmail
     })
@@ -86,7 +86,7 @@ test('Should not allow email update with current email', async t => {
 
   const res = await fetch(`${API_DOMAIN_DEV}/update/email`, {
     method: 'POST',
-    headers: { Authorization: 'Bearer ' + token },
+    headers: { Authorization: `Bearer ${token}` },
     body: JSON.stringify({
       email: userFactory.correct.email
     })
@@ -135,7 +135,7 @@ test('Should not allow email update with non-unique new email', async t => {
 
   const res = await fetch(`${API_DOMAIN_DEV}/update/email`, {
     method: 'POST',
-    headers: { Authorization: 'Bearer ' + token },
+    headers: { Authorization: `Bearer ${token}` },
     body: JSON.stringify({
       email: userFactory.correct2.email
     })
