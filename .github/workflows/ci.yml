@@ -47,6 +47,12 @@ jobs:
 
     - name: Deploy API to Dev for endpoint testing
       run: npm run deploy:dev
+      env:
+        API_DOMAIN: ${{ secrets.API_DOMAIN_DEV }}
+        API_DOMAIN_DEV: ${{ secrets.API_DOMAIN_DEV }}
+        TABLE_DEV: ${{ secrets.TABLE_DEV }}
+        EMAIL_VERIFICATION_SECRET: ${{ secrets.EMAIL_VERIFICATION_SECRET }}
+        SENDINBLUE_KEY: ${{ secrets.SENDINBLUE_KEY }}
 
     - name: Run end to end tests
       run: npm run test:e2e
