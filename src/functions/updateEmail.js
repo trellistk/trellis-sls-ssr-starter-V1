@@ -50,7 +50,7 @@ module.exports.updateEmail = async (event, context) => {
 
   const { email: newEmail } = JSON.parse(body)
 
-  logInfo(sequence.STEP_FOUND_REQUEST_DATA)
+  logInfo(sequence.STEP_FOUND_REQUEST_DATA, newEmail)
 
   if (newEmail === oldEmail) {
     logError(sequence.ERROR_EMAILS_MATCH)
