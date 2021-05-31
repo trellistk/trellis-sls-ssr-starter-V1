@@ -3,7 +3,7 @@ const AWS = require('aws-sdk')
 
 const ssm = new AWS.SSM()
 
-module.exports.getSecret = async (secretName) => {
+module.exports = async (secretName) => {
   const params = {
     Name: secretName,
     WithDecryption: true

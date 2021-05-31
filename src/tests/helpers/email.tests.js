@@ -8,10 +8,15 @@ const sib = require('../../../helpers/email')
 test('Happy create contact', async t => {
   const email = 'noreply@teamnouri.org'
   const {
-    sib_id: subId
+    sib_id: subId,
+    error
   } = await sib.createContact({
     email
   })
+
+  if (error) {
+    t.fail(`Error creating contact: ${error}`)
+  }
 
   t.equals(typeof subId, 'number')
 

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nouri App: Sign Up</title>
+  <style>
+    body {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      max-width: 500px;
+      margin: 10px auto;
+    }
+    fieldset {
+      border: 0;
+      display: flex;
+      flex-direction: column;
+      margin-top: 15px;
+    }
+    legend {
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    label {
+      margin-top: 5px;
+    }
+    input:valid {
+      color: green;
+    }
+    input:invalid {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Nouri (& Local Foodbank) Signup Form</h1>
+
+  <p>This form is for low income families with school aged, unborn, and disabled who are in need of food assistance. By submitting this form you agree:</p>
+  <ul>
+    <li>That your household includes school aged, disabled or unborn children.</li>
+    <li>That you and your family struggle with providing nutritious meals for your children due to financial struggles and gaps in welfare or other services for low income families.</li>
+    <li>To share contact and delivery information we need to deliver the food to you and your family (address to deliver food to, and sign up to our Slack app to send you notifications about your delivery.</li>
+    <li>To allow us to share your information with local food banks we work with to help them with their compliance and data collection.</li>
+    <li>To provide feedback to help us make improvements to our service when we send them out. We need to know what is working and what isn't so that we can know what we can do better.</li>
+    <li>To acknowledge that Nouri is a non profit run by volunteers and we work with other non profits and the generosity of local businesses to get food to you. We do not have big funding at this time. Currently, our volunteers take time out of their day and funds from their own pockets to help us validate and improve an idea.</li>
+    <li>That you or someone you trust will be available to receive delivery on the days you accept deliveries or let us know if we are able to safely leave perishable food in an insulated bag you leave by your door. We will try to provide insulated bags for you when we have ones available.</li>
+    <li>That Nouri and our volunteers will try our best to accommodate allergies and dietary restrictions but we also need your help in identifying what items we source are good or not. Because of this, per delivery days, we will be sourcing items that will accommodate everyone on our list as much as possible and to the best of our abilities and resources.</li>
+    <li>That whenever you don't need our service, you will let us know so that we can direct resources to other families in need.</li>
+    <li>This service is only currently going to be available in the following cities: Redmond, Kirkland, Bellevue, Woodinville, and Duvall BUT we are looking to expand to neighboring cities once we have enough signups there.</li>
+    <li>That you sign up and communicate with us through our community app (Slack) which is available for most mobile phones and also as a desktop website. This app helps us with our logistics and communications. It allows our logistics team to message you without needing your phone number or email.</li>
+  </ul>
+
+  <h2>THE PLAN:</h2>
+  <ul>
+    <li>We send you a notice by our Slack App asking if you're able to accept a delivery for the week. If you have a smart phone, please make sure your operating system is up-to-date. If you don't have a smart phone, the app is available as desktop apps or in the browser on a computer.</li>
+    <li>When we are able to add you to our delivery list you get a message from us, you reply YES or NO within the deadline given (currently Monday’s or Wednesday’s 5pm PST).</li>
+    <li>We source and deliver fresh, perishable food every other week or twice a month depending on shopper/driver availability.</li>
+    <li>Give us your feedback and to make sure to keep up with our announcements.</li>
+  </ul>
+
+  <p>After the sign up, you should be taken to a page with a link to sign up for our Slack Workspace. If you have any issues or trouble, please let us know. Send us an email at hello@teamnouri.org and we will do our best to help you.</p>
+ 
+  <h1>Sign Up with Nouri</h1>
+
+  <form action="./signup" method="POST">
+    <input type="hidden" name="csrf_token" value="{{csrf_token}}"></input>
+
+    <fieldset>
+      <legend>Login Information</legend>
+      <label for="email">Email</label>
+      <input type="email" name="email" required>
+      
+      <p>For your password, please make sure you have the following</p>
+      <ul>
+        <li>At least two upper case letters.</li>
+        <li>At least one special characters like !@#$&*</li>
+        <li>At least two numbers.</li>
+        <li>At least three lower case letters.</li>
+        <li>At least 12 characters in total</li>
+      </ul>
+      <label for="password1">Password</label>
+      <input type="password" name="password1" pattern="^(?=.*[A-Z].*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{12,}$" required>
+      <label for="password2">Confirm Your Password</label>
+      <input type="password" name="password2" pattern="^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{12,}$" required>
+    </fieldset>
+
+    <fieldset>
+      <legend>Contact Information</legend>
+
+      <label for="fname">Parent/Guardian First Name</label>
+      <input type="text" name="fname" pattern="^(?=.{1,40}$)[a-zA-Z]+(?:[-'\s][a-zA-Z]+)*$" required>
+      <label for="lname">Parent/Guardian Last Name</label>
+      <input type="text" name="lname" pattern="^(?=.{1,40}$)[a-zA-Z]+(?:[-'\s][a-zA-Z]+)*$" required>
+
+      <label for="phone">Phone Number (Required by local food banks)</label>
+      <input type="tel" name="phone" required placeholder="(123) 456-7890" pattern="^(\([0-9]{3}\) |[0-9]{3}-)[0-9]{3}-[0-9]{4}$" size="20">
+    </fieldset>
+
+    <fieldset>
+      <legend>Delivery Information</legend>
+
+      <label for="chapter">Chapter</label>
+      <select name="chapter" id="">
+        <option value="seattle-eastside">Seattle Eastside (Redmond, Kirkland, Woodinville, Bothell</option>
+      </select>
+
+      <label for="street1">Street Address</label>
+      <input type="text" name="street1" required>
+
+      <label for="street2">Street Address line 2 (optional)</label>
+      <input type="text" name="street2">
+
+      <label for="city">City</label>
+      <select name="city" id="" required>
+        <option value="Woodinville">Woodinville</option>
+        <option value="Redmond">Redmond</option>
+        <option value="Bothell">Bothell</option>
+        <option value="Kirkland">Kirkland</option>
+      </select>
+
+      <label for="state">State</label>
+      <select name="state" id="" required>
+        <option value="WA">WA</option>
+      </select>
+
+      <label for="zip">Zip Code</label>
+      <input type="text" name="zip" pattern="[0-9]{5}" required>
+
+      <label for="delivery_notes">Special notes about delivery. Please include contact information if someone else is receiving your delivery (optional).</label>
+      <textarea name="delivery_notes" id="" cols="30" rows="10" maxlength="500"></textarea>
+    </fieldset>
+
+    <fieldset>
+      <legend>Alias</legend>
+
+      <label for="alias">Online community alias. If you are a victim of domestic abuse or wish to keep more anonymity in our online community, you may submit a different name in this field that you will use in our online community app.</label>
+      <input type="text" name="alias" pattern="^[a-zA-Z0-9_-]*$">
+    </fieldset>
+
+    <fieldset>
+      <legend>Family Information</legend>
+
+      <label for="members">Family member names and ages (required by local food banks)</label>
+      <textarea name="members" id="" cols="30" rows="10" maxlength="500" required></textarea>
+
+      <label for="member_count">Total number of members in your household (including you)</label>
+      <input type="number" name="member_count" required>
+
+      <label for="kids_who_can_cook_count">How many kids do you have who are old enough to cook or learn how to cook?</label>
+      <input type="number" name="kids_who_can_cook_count" required>
+
+      <label for="allergies_restrictions">Allergies or Food restrictions</label>
+      <textarea name="allergies_restrictions" id="" cols="30" rows="10" maxlength="500"></textarea>
+
+      <label for="income">Your total household income per month (Required by Local Food banks)</label>
+      <select name="income" id="" required>
+        <option value="0-1500">$1,500 or less</option>
+        <option value="1500-2500">$1,500 - $2,500</option>
+        <option value="2500-4000">$2,500 - $4,000</option>
+        <option value="4000-8000">Greater than $4,000</option>
+      </select>
+    </fieldset>
+
+    <h2>Before you proceed.</h2>
+    <p>Please note that we will be communicating with you mainly through our online community app with Slack. Please ensure that you join the community and check messages we send there. If you have any issues, send us an email.</p>
+
+    <ul>
+      <li><a href="https://join.slack.com/t/nourimeals/shared_invite/zt-eazf9dfl-ugWoOb6AYblxYliqjwOifw">Direct Signup with Slack</a></li>
+      <li><a href="https://github.com/nourimeals/documents/blob/master/Getting-Started/JOINING_OUR_SLACK_COMMUNITY.md">Instructions on how to join the Slack Community.</a></li>
+    </ul>
+
+    <p>By signing up with Nouri, you agree to follow the Nouri Code of Conduct and that the above information you submit is true.</p>
+
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>

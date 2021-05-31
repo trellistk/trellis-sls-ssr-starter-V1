@@ -44,9 +44,14 @@ jobs:
       env:
         EMAIL_VERIFICATION_SECRET: ${{ secrets.EMAIL_VERIFICATION_SECRET }}
         SENDINBLUE_KEY: ${{ secrets.SENDINBLUE_KEY }}
+        API_DOMAIN: http://localhost:3000/dev
 
     - name: Deploy API to Dev for endpoint testing
       run: npm run deploy:dev
+      env:
+        EMAIL_VERIFICATION_SECRET: ${{ secrets.EMAIL_VERIFICATION_SECRET }}
+        SENDINBLUE_KEY: ${{ secrets.SENDINBLUE_KEY }}
+        DOMAIN: ${{ secrets.API_DOMAIN_DEV }}
 
     - name: Run end to end tests
       run: npm run test:e2e

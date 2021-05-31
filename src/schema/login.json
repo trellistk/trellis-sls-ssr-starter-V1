@@ -13,10 +13,12 @@
 
   "properties": {
     "chapter": {
-      "type": "string"
+      "type": "string",
+      "enum": ["seattle-eastside"]
     },
     "email": {
-      "type": "string"
+      "type": "string",
+      "format": "email"
     },
     "password": {
       "type": "string"

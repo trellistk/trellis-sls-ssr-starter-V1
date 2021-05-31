@@ -2,20 +2,25 @@
 
 module.exports.userFactory = {
   correct: {
-    chapter: 'seattle-eastside',
     email: 'jane@doe.com',
-    password: '123password&23845',
+    password1: '123!@#qweQWE',
+    password2: '123!@#qweQWE',
     fname: 'jane',
     lname: 'doe',
-    phone: '1234567890',
+    phone: '(123) 123-1234',
+    chapter: 'seattle-eastside',
     street1: '123 main st apt 7',
     // street2: null,
     city: 'seattle',
     state: 'wa',
     zip: '98119',
-    totalHouseholdIncome: 1500
-    // communityAlias: null,
-    // deliveryNotes: null
+    delivery_notes: 'my delivery notes submitted',
+    alias: 'mynickname',
+    members: 'member1 member 2 member3',
+    member_count: 5,
+    kids_who_can_cook_count: 1,
+    allergies_restrictions: 'peanuts',
+    income: '0-1500'
   },
   correctUpdate: {
     fname: 'janie',

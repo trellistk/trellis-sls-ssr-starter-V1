@@ -1,9 +1,21 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Update Family Schema",
+  "title": "Create Family Schema",
   "type": "object",
 
   "properties": {
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "password1": {
+      "type": "string",
+      "pattern": "^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{12,}$"
+    },
+    "password2": {
+      "type": "string",
+      "pattern": "^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{12,}$"
+    },
     "fname": {
       "type": "string",
       "pattern": "^(?=.{1,40}$)[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$"
@@ -21,8 +33,12 @@
       "type": "string",
       "enum": ["seattle-eastside"]
     },
-    "street1": { "type": "string" },
-    "street2": { "type": "string" },
+    "street1": {
+      "type": "string"
+    },
+    "street2": {
+      "type": "string"
+    },
     "city": {
       "type": "string",
       "enum": [
@@ -70,6 +86,9 @@
   },
 
   "required": [
+    "email",
+    "password1",
+    "password2",
     "fname",
     "lname",
     "phone",
