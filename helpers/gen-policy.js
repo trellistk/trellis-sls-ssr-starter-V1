@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports.generatePolicy = (principalId, effect, resource) => {
+module.exports = (principalId, effect, resource) => {
   const authResponse = {}
 
   authResponse.principalId = principalId

@@ -7,6 +7,7 @@ frameworkVersion: ">=2.3.0"
 plugins:
   - serverless-dynamodb-local
   - serverless-offline
+  - serverless-dotenv-plugin
 custom:
   dynamodb:
     stages:
@@ -22,10 +23,9 @@ provider:
   region: us-west-2
   environment:
     DYNAMODB_TABLE: "${self:service}-${opt:stage, self:provider.stage}"
-    FE_DOMAIN: http://localhost:3001
     EMAIL_VERIFICATION_SECRET: ${env:EMAIL_VERIFICATION_SECRET}
     SENDINBLUE_KEY: ${env:SENDINBLUE_KEY}
-    API_DOMAIN: ${env:API_DOMAIN}
+    DOMAIN: ${env:DOMAIN}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -52,80 +52,81 @@ provider:
 functions:
   authorize:
     handler: src/functions/authorize.authorize
+  signupPage:
+    handler: src/functions/signup-page.signupPage
+    events:
+      - http:
+          method: get
+          path: /signup
   signUp:
-    handler: src/functions/signUp.signUp
+    handler: src/functions/signup.signup
     events:
       - http:
           method: post
-          # cors: true
+          cors: true
           path: /signup
-          # TODO: Fix schema validation
           request:
             passThrough: NEVER
             schema:
-              application/json: "${file(src/schema/create_user.json)}"
+              application/json: "${file(src/schema/create_family.json)}"
   verifyEmail:
-    handler: src/functions/verifyEmail.verifyEmail
+    handler: src/functions/verify-email.verifyEmail
     events:
       - http:
           method: get
           path: /verify/{token}
+  loginPage:
+    handler: src/functions/login-page.loginPage
+    events:
+      - http:
+          method: get
+          path: /login
   login:
     handler: src/functions/login.login
     events:
       - http:
           method: post
-          # cors: true
+          cors: true
           path: /login
           request:
             passThrough: NEVER
             schema:
               application/json: "${file(src/schema/login.json)}"
-  getAllUsers:
-    handler: src/functions/getAllUsers.getAllUsers
+  logout:
+    handler: src/functions/logout.logout
     events:
       - http:
           method: get
-          # cors: true
-          path: /users
-          authorizer: authorize        
-  getFamilyDetails:
-    handler: src/functions/getFamilyDetails.getFamilyDetails
+          cors: true
+          path: /logout
+  familyPage:
+    handler: src/functions/family-page.familyPage
     events:
       - http:
           method: get
-          # cors: true
           path: /family
-          authorizer: authorize
-  updateFamilyDetails:
-    handler: src/functions/updateFamilyDetails.updateFamilyDetails
+          cors: true
+          authorizer: 
+            name: authorizer
+            resultTtlInSeconds: 300
+            type: request
+  family:
+    handler: src/functions/family.family
     events:
       - http:
-          method: put
-          # cors: true
+          method: post
+          cors: true
           path: /family
-          authorizer: authorize 
+          authorizer: 
+            name: authorizer
+            resultTtlInSeconds: 300
+            type: request
           request:
             passThrough: NEVER
             schema:
               application/json: "${file(src/schema/update_family_details.json)}"
-  updatePassword:
-    handler: src/functions/updatePassword.updatePassword
-    events:
-      - http:
-          method: put
-          # cors: true
-          path: /reset
-          authorizer: authorize 
-  deleteUser:
-    handler: src/functions/deleteUser.deleteUser
-    events:
-      - http:
-          method: delete
-          # cors: true
-          path: /user
-          authorizer: authorize 
-
+  authorizer:
+    handler: src/functions/authorize.authorize
 
 resources:
   Resources:

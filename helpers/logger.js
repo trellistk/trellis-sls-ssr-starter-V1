@@ -1,38 +1,43 @@
 'use strict'
 
-// TODO ensure sanitization of PII
-const maskObj = (obj) => {
-  const newObj = { ...obj }
-  return newObj
-}
-
 /**
  * @description Helper for structured logging.
  * @param {*} param
  * param.sequence = the name of the sequence that will run.
  */
-module.exports = ({
-  sequence
-}) => {
+module.exports = (sequenceName) => {
+  if (!sequenceName) console.warn('WARNING:', 'No sequence name found.')
+
+  console.info(`START_${sequenceName}`)
+
   const info = {
-    sequence: sequence,
+    sequence_name: sequenceName,
     step: null,
     userid: null,
     chapter: null,
     data: {}
   }
+  const sequence = {}
   return {
-    logInfo: (step, data) => {
+    info: (step, data) => {
+      if (!step) console.warn('WARNING:', 'No step name found.')
+      if (sequence[step]) console.warn('WARNING:', 'Duplicate step detected.')
+
       info.data = data
       info.step = step
-      console.info('INFO:', maskObj(info))
+      sequence[step] = step
+      console.info('INFO:', info)
     },
-    logError: (step, data) => {
+    error: (step, data) => {
+      if (!step) console.warn('WARNING:', 'No error name found.')
+      if (sequence[step]) console.warn('WARNING:', 'Duplicate error detected.')
+
       info.data = data
       info.step = step
-      console.error('ERROR:', maskObj(info))
+      sequence[step] = step
+      console.error('ERROR:', info)
     },
-    logAdd: (key, value) => {
+    add: (key, value) => {
       info[key] = value
     }
   }

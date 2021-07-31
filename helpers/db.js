@@ -1,189 +1,269 @@
 'use strict'
 
+const bcrypt = require('bcryptjs')
+const validator = require('validator')
+
 const db = require('../database/dynamodb')
 const TableName = process.env.DYNAMODB_TABLE
 
-/**
- * @description Creates DynamoDB documents
- * @param {*} param
- */
-module.exports.createDocument = async ({
-  chapter, // primary key/chapter name
-  docSort, // sort key/document type
-  attributes // other attributes
+module.exports.signUpFamily = async ({
+  chapter,
+  email,
+  password1,
+  password2,
+  fname,
+  lname,
+  phone,
+  street1,
+  street2,
+  city,
+  state,
+  zip,
+  delivery_notes: deliveryNotes,
+  alias,
+  members,
+  member_count: memberCount,
+  kids_who_can_cook_count: kidsWhoCanCookCount,
+  allergies_restrictions: allergiesRestrictions,
+  income,
+  email_verified = false
 }) => {
-  attributes.chapter = chapter
-  attributes.docSort = docSort
+  // Check required fields
+
+  // check that both passwords are the same
+  if (password1 !== password2) {
+    return { error: 'Passwords do not match.' }
+  }
+
+  let hashedPassword
+  try {
+    hashedPassword = await bcrypt.hashSync(password1, 10)
+  } catch (error) {
+    return { error }
+  }
 
   const params = {
     TableName,
-    Item: { ...attributes },
+    Item: {
+      chapter,
+      docSort: `family:${email}`,
+      email,
+      password: hashedPassword,
+      fname,
+      lname,
+      phone,
+      street1,
+      street2,
+      city,
+      state,
+      zip,
+      delivery_notes: deliveryNotes,
+      alias,
+      members,
+      member_count: memberCount,
+      kids_who_can_cook_count: kidsWhoCanCookCount,
+      allergies_restrictions: allergiesRestrictions,
+      income,
+      email_verified
+    },
     ConditionExpression: 'attribute_not_exists(docSort)'
+  }
+
+  // Try to sanitize all the fields
+  for (const [key, value] of Object.entries(params.Item)) {
+    if (key === 'password') continue
+    if (!value) continue
+    params.Item[key] = validator.escape(value.toString())
   }
 
   try {
     await db.put(params).promise()
-    return { }
+    return { succes: 'Successfully created new family.' }
   } catch (error) {
     return { error }
   }
 }
 
-// TODO Implement
-module.exports.queryDeliveryList = async (docSort, city, deliveryDay) => {
-  const params = {
-    TableName,
-    KeyConditionExpression: 'chapter = :chapter',
-    FilterExpression: 'address.city = :city AND deliveryDay = :deliveryDay',
-    ExpressionAttributeValues: {
-      ':chapter': docSort,
-      ':city': city,
-      ':deliveryDay': deliveryDay
-    }
-  }
+module.exports.verifyEmail = async (chapter, docSort) => {
   try {
-    const deliveryList = await db.query(params).promise()
-    return deliveryList
-  } catch (error) {
-    return { error }
-  };
-}
-
-/**
- * @description Retrieves a DynamoDB Document
- * @param {*} chapter
- * @param {*} sortKey
- */
-module.exports.getDocument = async (chapter, docSort) => {
-  const params = {
-    TableName,
-    Key: {
-      chapter,
-      docSort
-    }
-  }
-
-  try {
-    const res = await db.get(params).promise()
-
-    if (!res.Item) {
-      return { error: 'User not found' }
-    }
-
-    return { data: res.Item }
-  } catch (error) {
-    return { error }
-  }
-}
-
-// TODO Method for updating just the username and password.
-// NOTE: will likely need to delete old entry and re-add the new entry.
-
-/**
- * @description Helper. Filters builds the attributes
- * and help us get around reserved keywords
- * @param {*} userInfo
- */
-const updateUserExpressionHelper = userInfo => {
-  const processed = {
-    UpdateExpression: 'set',
-    ExpressionAttributeValues: {},
-    ExpressionAttributeNames: {}
-  }
-  for (const key in userInfo) {
-    const val = userInfo[key]
-
-    if (val) {
-      // 'state' is reserved so we have to rename it
-      if (key === 'state') {
-        processed.UpdateExpression += ` #us${key} = :${key},`
-        processed.ExpressionAttributeValues[`:${key}`] = val
-        processed.ExpressionAttributeNames[`#us${key}`] = `:${key}`
-        continue
+    const params = {
+      TableName,
+      Key: {
+        chapter,
+        docSort
+      },
+      AttributeUpdates: {
+        email_verified: {
+          Action: 'PUT',
+          Value: true
+        }
       }
-      processed.UpdateExpression += ` #${key} = :${key},`
-      processed.ExpressionAttributeValues[`:${key}`] = val
-      processed.ExpressionAttributeNames[`#${key}`] = `:${key}`
     }
-  }
-  // remove the last comma
-  processed.UpdateExpression = processed.UpdateExpression.slice(0, -1)
-  return processed
-}
 
-/**
- * @description Helper. Custom attribute names have extra characters
- * This removes those from the keys in the object.
- * @param {*} updateData
- */
-const updateUserCleanObj = updateData => {
-  const newObj = {}
-  for (const key in updateData) {
-    const newKey = key.slice(1)
-    newObj[newKey] = updateData[key]
-  }
-  return newObj
-}
+    await db.update(params).promise()
 
-/**
- * @description Updates a Family's document. Only supports updating of family details. Does not include email and password
- * @param {*} chapter
- * @param {*} sortKey
- * @param {*} attributes
- */
-module.exports.updateFamilyDocument = async (chapter, docSort, attributes) => {
-  const processedExpression = updateUserExpressionHelper(attributes)
-
-  const params = {
-    TableName,
-    Key: {
-      chapter,
-      docSort
-    },
-    ConditionExpression: 'attribute_exists(docSort)',
-    UpdateExpression: processedExpression.UpdateExpression,
-    ExpressionAttributeValues: processedExpression.ExpressionAttributeValues,
-    ExpressionAttributeNames: processedExpression.ExpressionAttributeNames,
-    ReturnValues: 'UPDATED_NEW'
-  }
-
-  try {
-    const { Attributes: updatedInfo } = await db.update(params).promise()
-    return {
-      info: updateUserCleanObj(updatedInfo)
-    }
+    return { success: 'Verified Email Successfully.' }
   } catch (error) {
     return { error }
   }
 }
 
-/**
- * @description Updates a user's login password.
- * @param {*} chapter
- * @param {*} sortKey
- * @param {*} attributes
- */
-module.exports.updateUserPassword = async (chapter, docSort, attributes) => {
-  const processedExpression = updateUserExpressionHelper(attributes)
-
+module.exports.getFamily = async (chapter, docSort) => {
   const params = {
     TableName,
     Key: {
       chapter,
       docSort
-    },
-    ConditionExpression: 'attribute_exists(docSort)',
-    UpdateExpression: processedExpression.UpdateExpression,
-    ExpressionAttributeValues: processedExpression.ExpressionAttributeValues,
-    ExpressionAttributeNames: processedExpression.ExpressionAttributeNames,
-    ReturnValues: 'NONE'
+    }
   }
 
   try {
-    const { Attributes: updatedInfo } = await db.update(params).promise()
-    return {
-      info: updateUserCleanObj(updatedInfo)
+    const familyInfo = await db.get(params).promise()
+
+    if (familyInfo.length === 0 || !familyInfo.Item || !familyInfo.Item.length === 0) {
+      return { error: 'Error finding record.' }
     }
+
+    return { family: familyInfo.Item }
+  } catch (error) {
+    return { error }
+  }
+}
+
+module.exports.addSession = async (chapter, docSort, token) => {
+  try {
+    const params = {
+      TableName,
+      Key: {
+        chapter,
+        docSort
+      },
+      AttributeUpdates: {
+        session: {
+          Action: 'PUT',
+          Value: token
+        }
+      }
+    }
+
+    await db.update(params).promise()
+
+    return { success: 'Added Session' }
+  } catch (error) {
+    return { error }
+  }
+}
+
+module.exports.addCsrf = async (chapter, docSort, csrf) => {
+  try {
+    const params = {
+      TableName,
+      Key: {
+        chapter,
+        docSort
+      },
+      AttributeUpdates: {
+        csrf: {
+          Action: 'PUT',
+          Value: csrf
+        }
+      }
+    }
+
+    await db.update(params).promise()
+
+    return { success: 'Added Session' }
+  } catch (error) {
+    return { error }
+  }
+}
+
+module.exports.updateFamily = async (chapter, docSort, {
+  fname,
+  lname,
+  phone,
+  street1,
+  street2,
+  city,
+  state,
+  zip,
+  alias,
+  members,
+  member_count: memberCount,
+  kids_who_can_cook_count: kidsWhoCanCookCount,
+  allergies_restrictions: allergiesRestrictions,
+  income
+}) => {
+  try {
+    const params = {
+      TableName,
+      Key: {
+        chapter,
+        docSort
+      },
+      AttributeUpdates: {
+        fname: {
+          Action: 'PUT',
+          Value: fname
+        },
+        lname: {
+          Action: 'PUT',
+          Value: lname
+        },
+        phone: {
+          Action: 'PUT',
+          Value: phone
+        },
+        street1: {
+          Action: 'PUT',
+          Value: street1
+        },
+        street2: {
+          Action: 'PUT',
+          Value: street2
+        },
+        city: {
+          Action: 'PUT',
+          Value: city
+        },
+        state: {
+          Action: 'PUT',
+          Value: state
+        },
+        zip: {
+          Action: 'PUT',
+          Value: zip
+        },
+        alias: {
+          Action: 'PUT',
+          Value: alias
+        },
+        members: {
+          Action: 'PUT',
+          Value: members
+        },
+        member_count: {
+          Action: 'PUT',
+          Value: memberCount
+        },
+        kids_who_can_cook_count: {
+          Action: 'PUT',
+          Value: kidsWhoCanCookCount
+        },
+        allergies_restrictions: {
+          Action: 'PUT',
+          Value: allergiesRestrictions
+        },
+        income: {
+          Action: 'PUT',
+          Value: income
+        }
+      }
+    }
+
+    await db.update(params).promise()
+
+    return { success: 'Updated family' }
   } catch (error) {
     return { error }
   }

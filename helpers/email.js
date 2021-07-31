@@ -20,14 +20,9 @@ module.exports.createContact = async ({
 
   try {
     const res = await contactsApi.createContact(newContact)
-    return {
-      sib_id: res.id
-    }
-  } catch (e) {
-    console.error('Error creating new contact', e)
-    return {
-      error: e
-    }
+    return { sib_id: res.id }
+  } catch (error) {
+    return { error }
   }
 }
 
@@ -40,11 +35,8 @@ module.exports.deleteContact = async ({
 }) => {
   try {
     await contactsApi.deleteContact(email)
-  } catch (e) {
-    console.error('Error deleting contact', e)
-    return {
-      error: e
-    }
+  } catch (error) {
+    return { error }
   }
 }
 
@@ -72,8 +64,8 @@ const generateToken = async ({
     )
 
     return token
-  } catch (e) {
-    console.error('Error creating verification token')
+  } catch (error) {
+    return { error }
   }
 }
 
@@ -134,14 +126,9 @@ module.exports.sendVerifyEmail = async ({
 
   try {
     const res = await transEmailApi.sendTransacEmail(newEmail)
-    return {
-      sib_msg_id: res.messageId
-    }
-  } catch (e) {
-    console.error('Error sending email', e)
-    return {
-      error: e
-    }
+    return { sib_msg_id: res.messageId }
+  } catch (error) {
+    return { error }
   }
 }
 
@@ -167,7 +154,6 @@ module.exports.verifyEmailToken = async ({
       }
     }
   } catch (error) {
-    console.error('Error finding token')
     return { error }
   }
 }
@@ -201,13 +187,8 @@ module.exports.sendTransEmail = async ({
 
   try {
     const res = await transEmailApi.sendTransacEmail(newEmail)
-    return {
-      sib_msg_id: res.messageId
-    }
-  } catch (e) {
-    console.error('Error sending email', e)
-    return {
-      error: e
-    }
+    return { sib_msg_id: res.messageId }
+  } catch (error) {
+    return { error }
   }
 }

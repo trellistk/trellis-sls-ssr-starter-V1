@@ -1,111 +1,96 @@
 'use strict'
-const bcrypt = require('bcryptjs')
-const { httpResponse, httpError } = require('../../helpers/response')
-const { createDocument } = require('../../helpers/db')
+
+const qs = require('querystring')
+const db = require('../../helpers/db')
 const logger = require('../../helpers/logger')
 const emailHelper = require('../../helpers/email')
+const getSecret = require('../../helpers/get-secret')
+const csrf = require('../../helpers/csrf')
+const { render } = require('simple-sls-ssr')
 
-const sequence = {
-  START_SIGNUP_SEQUENCE: 'START_SIGNUP_SEQUENCE',
-  STEP_EVENT_BODY_PARSED: 'STEP_EVENT_BODY_PARSED',
-  ERROR_HASHING_PASSWORD: 'ERROR_HASHING_PASSWORD',
-  STEP_PASSWORD_HASHED: 'STEP_PASSWORD_HASHED',
-  STEP_DOCUMENT_DATA_COLLECTED: 'STEP_DOCUMENT_DATA_COLLECTED',
-  ERROR_USERNAME_EXISTS: 'ERROR_USERNAME_EXISTS',
-  ERROR_CREATING_USER: 'ERROR_CREATING_USER',
-  SUCCESS_SIGNUP_USER_SEQUENCE: 'SUCCESS_SIGNUP_USER_SEQUENCE'
-}
+const log = logger('SEQUENCE_SIGNUP_USER')
 
 /**
  * @description Signs up a new family. Does NOT handle admin accounts.
  * @param {*} event
  * @param {*} context
  */
-module.exports.signUp = async (event, context) => {
-  const { logInfo, logError } = logger({
-    sequence: 'SEQUENCE_SIGNUP_USER'
-  })
+module.exports.signup = async (event, context) => {
+  console.log('***** event', event)
+  console.log('***** event.body', event.body, typeof event.body)
+  const body = await qs.parse(event.body)
+  console.log('***** signup received body', body, typeof body)
+  log.info('STEP_EVENT_BODY_PARSED')
 
-  logInfo(sequence.START_SIGNUP_SEQUENCE)
+  // Check csrf_token with no session.
+  const { error: getSecretErr } = await getSecret('/NouriServerless/jwtSecretKey/dev')
+  if (getSecretErr) {
+    log.error('ERROR_RETRIEVING_SECRET_KEY', { error: getSecretErr })
 
-  const {
-    password,
-    chapter,
-    email,
-    fname,
-    lname,
-    phone,
-    street1,
-    street2,
-    city,
-    state,
-    zip,
-    totalHouseholdIncome,
-    deliveryNotes,
-    communityAlias
-  } = JSON.parse(event.body)
-  logInfo(sequence.STEP_EVENT_BODY_PARSED)
-
-  let hashedPassword
-  try {
-    hashedPassword = await bcrypt.hashSync(password, 10)
-  } catch (e) {
-    logError(sequence.ERROR_HASHING_PASSWORD, e)
-    return httpError(400, 'Signup Error')
+    return await render('error', {
+      status_code: 403,
+      status_message: 'Forbidden',
+      details: 'Something went wrong.'
+    })
   }
 
-  logInfo(sequence.STEP_PASSWORD_HASHED)
+  log.info('STEP_SECRET_KEY_RETRIEVED')
 
-  const document = {
-    chapter,
-    docSort: `family:${email}`,
-    attributes: {
-      email,
-      fname,
-      lname,
-      phone,
-      street1,
-      street2,
-      city,
-      state,
-      zip,
-      totalHouseholdIncome,
-      deliveryNotes,
-      communityAlias,
-      password: hashedPassword,
-      email_verified: false
-    }
+  console.log('***** body.csrf_token', body.csrf_token)
+
+  const { error: csrfError } = await csrf.verify(body.csrf_token)
+
+  if (csrfError) {
+    log.error('ERROR_VERIFYING_CSRF_TOKEN', { error: csrfError })
+    return await render('error', {
+      status_code: 400,
+      status_message: 'Forbidden',
+      details: 'Something went wrong.'
+    })
   }
 
-  logInfo(sequence.STEP_DOCUMENT_DATA_COLLECTED)
+  log.info('STEP_DECODE_JWT_COMPLETE')
 
-  const { error: dbErr } = await createDocument(document)
+  const { error: dbErr } = await db.signUpFamily(body)
 
   if (dbErr) {
     if (dbErr.message === 'The conditional request failed') {
-      logError(sequence.ERROR_USERNAME_EXISTS)
-      return httpError(403, sequence.ERROR_USERNAME_EXISTS)
+      log.error('ERROR_USERNAME_EXISTS')
+      return await render('error', {
+        status_code: 403,
+        status_message: 'Forbidden',
+        details: 'Something went wrong.'
+      })
     }
-    logError(sequence.ERROR_CREATING_USER, dbErr)
-    return httpError(400, sequence.ERROR_CREATING_USER)
+    log.error('ERROR_CREATING_USER', { error: dbErr })
+    return await render('error', {
+      status_code: 400,
+      status_message: 'Forbidden',
+      details: 'Something went wrong.'
+    })
   }
 
-  logInfo(sequence.SUCCESS_SIGNUP_USER_SEQUENCE)
+  log.info('SUCCESS_SIGNUP_USER_SEQUENCE')
 
   // Send user the verification email
   const {
     error: emailError
   } = await emailHelper.sendVerifyEmail({
-    name: `${fname} ${lname}`,
-    email,
+    name: `${body.fname} ${body.lname}`,
+    email: body.email,
     type: 'family',
-    chapter
+    chapter: body.chapter
   })
 
   // Just log the error for now
   if (emailError) {
-    logError(sequence.ERROR_SENDING_VERIFICATION_EMAIL)
+    log.info('ERROR_SENDING_VERIFICATION_EMAIL', { error: emailError })
   }
 
-  return httpResponse(201, 'User successfully created!')
+  log.info('STEP_EMAIL_SIGNUP_SUCCESS')
+
+  // Return a success page
+  return await render('signup-success', {
+    fname: body.fname
+  })
 }
