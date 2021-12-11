@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User: Dashboard</title>
+  <style>
+    body {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    form {
+      max-width: 500px;
+      margin: 10px auto;
+    }
+    fieldset {
+      border: 0;
+      display: flex;
+      flex-direction: column;
+      margin-top: 15px;
+    }
+    legend {
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    label {
+      margin-top: 5px;
+    }
+    input:valid {
+      color: green;
+    }
+    input:invalid {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hi {{ fname }}</h1>
+  <h2>You can update your information here:</h2>
+  
+  <form action="./user" method="POST">
+    <input type="hidden" name="csrf_token" value="{{csrf_token}}"></input>
+
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>

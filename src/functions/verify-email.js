@@ -50,18 +50,18 @@ module.exports.verifyEmail = async (event, context) => {
 
   const {
     email,
-    chapter,
+    objectType,
     type
   } = verifyEmailData
 
   log.add('userid', `${type}:${email}`)
-  log.add('chapter', chapter)
+  log.add('objectType', objectType)
 
   const docSort = `${type}:${email}`
 
   const {
     error: dbError
-  } = await db.verifyEmail(chapter, docSort)
+  } = await db.verifyEmail(objectType, docSort)
 
   if (dbError) {
     log.error('ERROR_UPDATING_ACCOUNT', { error: dbError })

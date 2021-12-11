@@ -1,5 +1,5 @@
 {
-  "name": "nouri-serverless",
+  "name": "trellis-serverless-quickstart",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nourimeals/nouri-serverless.git"
+    "url": ""
   },
   "husky": {
     "hooks": {
@@ -36,9 +36,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nourimeals/nouri-serverless/issues"
+    "url": "http://github.com/trellistk"
   },
-  "homepage": "https://github.com/nourimeals/nouri-serverless#readme",
+  "homepage": "",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "argon2": "^0.26.2",

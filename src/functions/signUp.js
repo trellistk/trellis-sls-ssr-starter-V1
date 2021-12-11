@@ -11,7 +11,7 @@ const { render } = require('simple-sls-ssr')
 const log = logger('SEQUENCE_SIGNUP_USER')
 
 /**
- * @description Signs up a new family. Does NOT handle admin accounts.
+ * @description Signs up a new user. Does NOT handle admin accounts.
  * @param {*} event
  * @param {*} context
  */
@@ -20,7 +20,7 @@ module.exports.signup = async (event, context) => {
   log.info('STEP_EVENT_BODY_PARSED')
 
   // Check csrf_token with no session.
-  const { error: getSecretErr } = await getSecret('/NouriServerless/jwtSecretKey/dev')
+  const { error: getSecretErr } = await getSecret('/TrellisServerless/jwtSecretKey/dev')
   if (getSecretErr) {
     log.error('ERROR_RETRIEVING_SECRET_KEY', { error: getSecretErr })
 
@@ -46,7 +46,7 @@ module.exports.signup = async (event, context) => {
 
   log.info('STEP_DECODE_JWT_COMPLETE')
 
-  const { error: dbErr } = await db.signUpFamily(body)
+  const { error: dbErr } = await db.signUpUser(body)
 
   if (dbErr) {
     if (dbErr.message === 'The conditional request failed') {
@@ -73,8 +73,8 @@ module.exports.signup = async (event, context) => {
   } = await emailHelper.sendVerifyEmail({
     name: `${body.fname} ${body.lname}`,
     email: body.email,
-    type: 'family',
-    chapter: body.chapter
+    type: 'user',
+    objectType: body.objectType
   })
 
   // Just log the error for now

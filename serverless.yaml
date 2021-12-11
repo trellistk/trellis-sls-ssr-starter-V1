@@ -1,4 +1,4 @@
-service: NouriMeals-API
+service: Trellis Serverless Quickstart
 
 # Reference: https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
 
@@ -42,7 +42,7 @@ provider:
       Action:
         - ssm:GetParameter
       Resource:
-        - "arn:aws:ssm:us-west-2:274772592742:parameter/NouriServerless/jwtSecretKey/dev"
+        - ""
     - Effect: "Allow"
       Action:
         - kms:Decrypt
@@ -68,7 +68,7 @@ functions:
           request:
             passThrough: NEVER
             schema:
-              application/json: "${file(src/schema/create_family.json)}"
+              application/json: "${file(src/schema/create_user.json)}"
   verifyEmail:
     handler: src/functions/verify-email.verifyEmail
     events:
@@ -99,24 +99,24 @@ functions:
           method: get
           cors: true
           path: /logout
-  familyPage:
-    handler: src/functions/family-page.familyPage
+  userPage:
+    handler: src/functions/user-page.userPage
     events:
       - http:
           method: get
-          path: /family
+          path: /user
           cors: true
           authorizer: 
             name: authorizer
             resultTtlInSeconds: 300
             type: request
-  family:
-    handler: src/functions/family.family
+  user:
+    handler: src/functions/user.user
     events:
       - http:
           method: post
           cors: true
-          path: /family
+          path: /user
           authorizer: 
             name: authorizer
             resultTtlInSeconds: 300
@@ -124,7 +124,7 @@ functions:
           request:
             passThrough: NEVER
             schema:
-              application/json: "${file(src/schema/update_family_details.json)}"
+              application/json: "${file(src/schema/update_user_details.json)}"
   resetRequestPage:
     handler: src/functions/reset-request-page.resetRequestPage
     events:
@@ -161,18 +161,18 @@ functions:
 
 resources:
   Resources:
-    nouriTable:
+    defaultTable:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain
       Properties:
         TableName: "${self:provider.environment.DYNAMODB_TABLE}"
         AttributeDefinitions:
-            - AttributeName: chapter
+            - AttributeName: objectType
               AttributeType: S
             - AttributeName: docSort
               AttributeType: S
         KeySchema:
-            - AttributeName: chapter
+            - AttributeName: objectType
               KeyType: HASH
             - AttributeName: docSort
               KeyType: RANGE

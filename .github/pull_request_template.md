@@ -25,8 +25,8 @@ title: '[Title]'
 - [ ] New tests have been added for new code.
 - [ ] JSDoc Documentation and comments have been added or updated in the code.
 - [ ] Documentation in the /docs folder has been added or updated when appropirate.
-- [ ] Follows Nouri JavaScript guidelines
-- [ ] Commit message follows Nouri guidelines
+- [ ] Follows Project JavaScript guidelines
+- [ ] Commit message follows Project guidelines
 - [ ] Introduces minimal or no additional external packages.
 
 

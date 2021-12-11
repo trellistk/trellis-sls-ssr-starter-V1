@@ -6,7 +6,7 @@ const test = require('tape')
 const sib = require('../../../helpers/email')
 
 test('Happy create contact', async t => {
-  const email = 'noreply@teamnouri.org'
+  const email = 'noreply'
   const {
     sib_id: subId,
     error
@@ -27,7 +27,7 @@ test('Happy create contact', async t => {
 
 test('Happy send email', async t => {
   const contact = {
-    email: 'noreply@teamnouri.org',
+    email: 'noreply',
     name: 'amber'
   }
   const res = await sib.sendTransEmail({

@@ -2,7 +2,7 @@ const getSecret = require('./get-secret')
 const jwt = require('jsonwebtoken')
 
 module.exports.getToken = async () => {
-  const { key: jwtSecretKey, error: getSecretError } = await getSecret('/NouriServerless/jwtSecretKey/dev')
+  const { key: jwtSecretKey, error: getSecretError } = await getSecret('/JwtServerless/jwtSecretKey/dev')
 
   if (getSecretError) {
     return { error: getSecretError }
@@ -18,7 +18,7 @@ module.exports.getToken = async () => {
 }
 
 module.exports.verify = async (token) => {
-  const { key: jwtSecretKey, error: getSecretError } = await getSecret('/NouriServerless/jwtSecretKey/dev')
+  const { key: jwtSecretKey, error: getSecretError } = await getSecret('/JwtServerless/jwtSecretKey/dev')
 
   if (getSecretError) {
     return { error: getSecretError }

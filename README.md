@@ -1,6 +1,6 @@
-# Nouri Serverless Application <!-- omit in toc -->
+# Trellis Serverless Quickstart <!-- omit in toc -->
 
-This project is to help us to manage family and delivery data.
+This project is to help get a starter Serverless Framework Server Side Rendering Application started quickly.
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -27,7 +27,7 @@ This project is to help us to manage family and delivery data.
 1. Clone the repo
    
    ```bash
-   git clone https://github.com/nourimeals/nouri-serverless.git
+   git clone https://github.com/<TBD>
    ```
 
 2. Install the serverless CLI

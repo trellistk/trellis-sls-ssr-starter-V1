@@ -7,7 +7,7 @@ module.exports.sendVerifyEmail = async ({
   name,
   email,
   type,
-  chapter
+  objectType
 }) => {
   return { sib_id: 12345 }
 }

@@ -10,6 +10,6 @@ const { response } = require('simple-sls-ssr')
 module.exports.logout = async (event, context) => {
   const pastDate = 'Thu, 01 Jan 1970 00:00:00 UTC;'
   return response.redirect('login', {
-    'Set-Cookie': `nouri=; expires=${pastDate}`
+    'Set-Cookie': `trellis=; expires=${pastDate}`
   })
 }

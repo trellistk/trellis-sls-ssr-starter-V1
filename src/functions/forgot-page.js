@@ -20,9 +20,9 @@ module.exports.forgot = async (event, context) => {
   // const body = qs.parse(event.body)
   log.info('STEP_REQUEST_BODY_PARSED')
 
-  // const docSort = `family:${body.email}`
+  // const docSort = `user:${body.email}`
   // log.add('userid', docSort)
-  // log.add('chapter', body.chapter)
+  // log.add('objectType', body.objectType)
   // log.info('STEP_LOGIN_PARSED_EVENT_BODY')
 
   // // TODO check CSRF
@@ -38,7 +38,7 @@ module.exports.forgot = async (event, context) => {
 
   // log.info('STEP_CSRF_TOKEN_VERIFIED')
 
-  // const { family: familyData, error: dbError } = await db.getFamily(body.chapter, docSort)
+  // const { user: userData, error: dbError } = await db.getUser(body.objectType, docSort)
   // if (dbError) {
   //   log.error('ERROR_LOGIN_RETRIEVING_USER_DATA', { error: dbError })
   //   return await render('error', {
@@ -53,7 +53,7 @@ module.exports.forgot = async (event, context) => {
   // const {
   //   password: hashedPassword,
   //   email_verified: emailVerified
-  // } = familyData
+  // } = userData
 
   // try {
   //   const isMatch = bcrypt.compareSync(body.password, hashedPassword)
@@ -78,7 +78,7 @@ module.exports.forgot = async (event, context) => {
 
   // log.info('STEP_PASSWORD_VALID')
 
-  // const { key: jwtSecretKey, error: getSecretError } = await getSecret('/NouriServerless/jwtSecretKey/dev')
+  // const { key: jwtSecretKey, error: getSecretError } = await getSecret('/TrellisServerless/jwtSecretKey/dev')
 
   // if (getSecretError) {
   //   log.error('ERROR_LOGIN_SECRET_KEY_RETRIEVAL', { error: getSecretError })
@@ -94,7 +94,7 @@ module.exports.forgot = async (event, context) => {
 
   // let token
   // try {
-  //   const payload = { email: body.email, chapter: body.chapter, emailVerified }
+  //   const payload = { email: body.email, objectType: body.objectType, emailVerified }
   //   token = jwt.sign(payload, jwtSecretKey, { expiresIn: '12h', algorithm: 'HS512' })
   // } catch (error) {
   //   log.error('ERROR_LOGIN_JWT_SIGNING', { error })
@@ -107,7 +107,7 @@ module.exports.forgot = async (event, context) => {
   // }
 
   // // Create a session in the database
-  // const { error: createSessionError } = await db.addSession(body.chapter, `family:${body.email}`, token)
+  // const { error: createSessionError } = await db.addSession(body.objectType, `user:${body.email}`, token)
   // if (createSessionError) {
   //   log.error('ERROR_CREATING_SESSION', { error: createSessionError })
   //   return await render('error', {
@@ -118,8 +118,8 @@ module.exports.forgot = async (event, context) => {
   // }
 
   // log.info('SUCCESS_LOGIN_USER_AUTHENTICATED')
-  // return await response.redirect('family', {
-  //   'Set-Cookie': `nouri=${token}`,
+  // return await response.redirect('user', {
+  //   'Set-Cookie': `trellis=${token}`,
   //   'Access-Control-Allow-Credentials': true
   // })
 }

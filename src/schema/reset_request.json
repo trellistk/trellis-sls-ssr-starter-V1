@@ -6,15 +6,10 @@
   "title": "Reset Request password User schema",
 
   "required": [
-    "email",
-    "chapter"
+    "email"
   ],
 
   "properties": {
-    "chapter": {
-      "type": "string",
-      "enum": ["seattle-eastside"]
-    },
     "email": {
       "type": "string",
       "format": "email"

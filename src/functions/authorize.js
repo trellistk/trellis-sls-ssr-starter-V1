@@ -9,7 +9,7 @@ const log = logger('SEQUENCE_AUTHORIZE_USER')
 
 /**
  * @description Middleware for authorizing logins. Currently only
- * supports family logins
+ * supports user logins
  * @param {*} event
  * @param {*} context
  */
@@ -21,13 +21,13 @@ module.exports.authorize = async (event, context) => {
   log.info('STEP_SESSION_TOKEN_RETRIEVED')
 
   if (authorizerArr.length !== 2 ||
-  authorizerArr[0] !== 'nouri' ||
+  authorizerArr[0] !== 'trellis' ||
   authorizerArr[1].length === 0) {
     log.error('STEP_ERROR_TOKEN_FORMATION')
     return generatePolicy('undefined', 'Deny', event.methodArn)
   }
 
-  const { key: jwtSecretKey, error: getSecretErr } = await getSecret('/NouriServerless/jwtSecretKey/dev')
+  const { key: jwtSecretKey, error: getSecretErr } = await getSecret('/TrellisServerless/jwtSecretKey/dev')
   if (getSecretErr) {
     log.error('ERROR_RETRIEVING_SECRET', { error: getSecretErr })
     return generatePolicy('undefined', 'Deny', event.methodArn)
@@ -44,20 +44,20 @@ module.exports.authorize = async (event, context) => {
   log.info('STEP_TOKEN_VERIFIED')
 
   const {
-    chapter, email
+    objectType, email
   } = decoded
 
   log.info('STEP_TOKEN_DECODED')
 
-  const docSort = `family:${email}`
+  const docSort = `user:${email}`
 
-  const { error: dbError } = await db.getFamily(chapter, docSort)
+  const { error: dbError } = await db.getUser(objectType, docSort)
   if (dbError) {
-    log.error('ERROR_RETRIEVING_FAMILY_INFO', { error: dbError })
+    log.error('ERROR_RETRIEVING_USER_INFO', { error: dbError })
     return generatePolicy('undefined', 'Deny', event.methodArn)
   }
 
-  const principalId = `${chapter}|family:${email}`
+  const principalId = `${objectType}|user:${email}`
 
   log.info('STEP_USER_AUTORIZED')
   return generatePolicy(principalId, 'Allow', event.methodArn)

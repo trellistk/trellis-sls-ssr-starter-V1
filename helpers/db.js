@@ -6,27 +6,10 @@ const validator = require('validator')
 const db = require('../database/dynamodb')
 const TableName = process.env.DYNAMODB_TABLE
 
-module.exports.signUpFamily = async ({
-  chapter,
+module.exports.signUpUser = async ({
   email,
   password1,
-  password2,
-  fname,
-  lname,
-  phone,
-  street1,
-  street2,
-  city,
-  state,
-  zip,
-  delivery_notes: deliveryNotes,
-  alias,
-  members,
-  member_count: memberCount,
-  kids_who_can_cook_count: kidsWhoCanCookCount,
-  allergies_restrictions: allergiesRestrictions,
-  income,
-  email_verified = false
+  password2
 }) => {
   // Check required fields
 
@@ -45,26 +28,11 @@ module.exports.signUpFamily = async ({
   const params = {
     TableName,
     Item: {
-      chapter,
-      docSort: `family:${email}`,
+      objectType: 'user',
+      docSort: `${email}`,
       email,
       password: hashedPassword,
-      fname,
-      lname,
-      phone,
-      street1,
-      street2,
-      city,
-      state,
-      zip,
-      delivery_notes: deliveryNotes,
-      alias,
-      members,
-      member_count: memberCount,
-      kids_who_can_cook_count: kidsWhoCanCookCount,
-      allergies_restrictions: allergiesRestrictions,
-      income,
-      email_verified
+      email_verified: false
     },
     ConditionExpression: 'attribute_not_exists(docSort)'
   }
@@ -78,18 +46,18 @@ module.exports.signUpFamily = async ({
 
   try {
     await db.put(params).promise()
-    return { succes: 'Successfully created new family.' }
+    return { succes: 'Successfully created new user.' }
   } catch (error) {
     return { error }
   }
 }
 
-module.exports.verifyEmail = async (chapter, docSort) => {
+module.exports.verifyEmail = async (objectType, docSort) => {
   try {
     const params = {
       TableName,
       Key: {
-        chapter,
+        objectType,
         docSort
       },
       AttributeUpdates: {
@@ -108,33 +76,33 @@ module.exports.verifyEmail = async (chapter, docSort) => {
   }
 }
 
-module.exports.getFamily = async (chapter, docSort) => {
+module.exports.getUser = async (objectType, docSort) => {
   const params = {
     TableName,
     Key: {
-      chapter,
+      objectType,
       docSort
     }
   }
 
   try {
-    const familyInfo = await db.get(params).promise()
+    const userInfo = await db.get(params).promise()
 
-    if (familyInfo.length === 0 || !familyInfo.Item || !familyInfo.Item.length === 0) {
+    if (userInfo.length === 0 || !userInfo.Item || !userInfo.Item.length === 0) {
       return { error: 'Error finding record.' }
     }
 
-    return { family: familyInfo.Item }
+    return { user: userInfo.Item }
   } catch (error) {
     return { error }
   }
 }
 
-module.exports.getLead = async (chapter, docSort) => {
+module.exports.getLead = async (objectType, docSort) => {
   const params = {
     TableName,
     Key: {
-      chapter,
+      objectType,
       docSort
     }
   }
@@ -152,12 +120,12 @@ module.exports.getLead = async (chapter, docSort) => {
   }
 }
 
-module.exports.addSession = async (chapter, docSort, token) => {
+module.exports.addSession = async (objectType, docSort, token) => {
   try {
     const params = {
       TableName,
       Key: {
-        chapter,
+        objectType,
         docSort
       },
       AttributeUpdates: {
@@ -176,12 +144,12 @@ module.exports.addSession = async (chapter, docSort, token) => {
   }
 }
 
-module.exports.addCsrf = async (chapter, docSort, csrf) => {
+module.exports.addCsrf = async (objectType, docSort, csrf) => {
   try {
     const params = {
       TableName,
       Key: {
-        chapter,
+        objectType,
         docSort
       },
       AttributeUpdates: {
@@ -200,92 +168,21 @@ module.exports.addCsrf = async (chapter, docSort, csrf) => {
   }
 }
 
-module.exports.updateFamily = async (chapter, docSort, {
-  fname,
-  lname,
-  phone,
-  street1,
-  street2,
-  city,
-  state,
-  zip,
-  alias,
-  members,
-  member_count: memberCount,
-  kids_who_can_cook_count: kidsWhoCanCookCount,
-  allergies_restrictions: allergiesRestrictions,
-  income
-}) => {
+module.exports.updateUser = async (objectType, docSort) => {
   try {
     const params = {
       TableName,
       Key: {
-        chapter,
+        objectType,
         docSort
       },
       AttributeUpdates: {
-        fname: {
-          Action: 'PUT',
-          Value: fname
-        },
-        lname: {
-          Action: 'PUT',
-          Value: lname
-        },
-        phone: {
-          Action: 'PUT',
-          Value: phone
-        },
-        street1: {
-          Action: 'PUT',
-          Value: street1
-        },
-        street2: {
-          Action: 'PUT',
-          Value: street2
-        },
-        city: {
-          Action: 'PUT',
-          Value: city
-        },
-        state: {
-          Action: 'PUT',
-          Value: state
-        },
-        zip: {
-          Action: 'PUT',
-          Value: zip
-        },
-        alias: {
-          Action: 'PUT',
-          Value: alias
-        },
-        members: {
-          Action: 'PUT',
-          Value: members
-        },
-        member_count: {
-          Action: 'PUT',
-          Value: memberCount
-        },
-        kids_who_can_cook_count: {
-          Action: 'PUT',
-          Value: kidsWhoCanCookCount
-        },
-        allergies_restrictions: {
-          Action: 'PUT',
-          Value: allergiesRestrictions
-        },
-        income: {
-          Action: 'PUT',
-          Value: income
-        }
       }
     }
 
     await db.update(params).promise()
 
-    return { success: 'Updated family' }
+    return { success: 'Updated user' }
   } catch (error) {
     return { error }
   }

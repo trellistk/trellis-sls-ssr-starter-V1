@@ -7,15 +7,10 @@
 
   "required": [
     "email",
-    "password",
-    "chapter"
+    "password"
   ],
 
   "properties": {
-    "chapter": {
-      "type": "string",
-      "enum": ["seattle-eastside"]
-    },
     "email": {
       "type": "string",
       "format": "email"

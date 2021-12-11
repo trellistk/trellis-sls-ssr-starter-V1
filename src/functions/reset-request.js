@@ -11,7 +11,7 @@ const { render } = require('simple-sls-ssr')
 const log = logger('SEQUENCE_RESET_REQUEST')
 
 /**
- * @description Signs up a new family. Does NOT handle admin accounts.
+ * @description Signs up a new user. Does NOT handle admin accounts.
  * @param {*} event
  * @param {*} context
  */
@@ -20,7 +20,7 @@ module.exports.resetRequest = async (event, context) => {
   log.info('STEP_EVENT_BODY_PARSED')
 
   // Check csrf_token with no session.
-  const { error: getSecretErr } = await getSecret('/NouriServerless/jwtSecretKey/dev')
+  const { error: getSecretErr } = await getSecret('/TrellisServerless/jwtSecretKey/dev')
   if (getSecretErr) {
     log.error('ERROR_RETRIEVING_SECRET_KEY', { error: getSecretErr })
 
@@ -46,22 +46,22 @@ module.exports.resetRequest = async (event, context) => {
 
   log.info('STEP_DECODE_JWT_COMPLETE')
 
-  const chapter = body.chapter
+  const objectType = body.objectType
   const email = body.email
 
-  // Check family
-  const familySort = `family:${email}`
-  const { family, error: getFamilyError } = await db.getFamily(chapter, familySort)
+  // Check user
+  const userSort = `user:${email}`
+  const { user, error: getUserError } = await db.getUser(objectType, userSort)
 
-  if (family !== undefined && getFamilyError === undefined) {
-    // send the family an email reset email
+  if (user !== undefined && getUserError === undefined) {
+    // send the User an email reset email
     const {
       error: sendResetError
     } = await emailHelper.sendResetEmail({
-      name: `${family.fname} ${family.lname}`,
-      email: family.email,
-      type: 'family',
-      chapter: family.chapter
+      name: `${user.fname} ${user.lname}`,
+      email: user.email,
+      type: 'user',
+      objectType: user.objectType
     })
 
     if (sendResetError) {

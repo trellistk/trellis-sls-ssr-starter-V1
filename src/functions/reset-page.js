@@ -51,18 +51,17 @@ module.exports.resetPage = async (event, context) => {
 
   const {
     email,
-    chapter,
-    type
+    objectType
   } = verifyEmailData
 
-  log.add('userid', `${type}:${email}`)
-  log.add('chapter', chapter)
+  log.add('userid', `${email}`)
+  log.add('objectType', objectType)
 
-  const docSort = `${type}:${email}`
+  const docSort = `${email}`
 
   const {
     error: dbError
-  } = await db.verifyEmail(chapter, docSort)
+  } = await db.verifyEmail(objectType, docSort)
 
   if (dbError) {
     log.error('ERROR_UPDATING_ACCOUNT', { error: dbError })
@@ -83,12 +82,11 @@ module.exports.resetPage = async (event, context) => {
     return response.http(400, 'RESET ERROR')
   }
 
-  await db.addCsrf(chapter, docSort, csrfToken)
+  await db.addCsrf(objectType, docSort, csrfToken)
 
   return await render('reset', {
     csrf_token: csrfToken,
     email: email,
-    chapter: chapter,
-    type: type
+    objectType: 'user'
   })
 }

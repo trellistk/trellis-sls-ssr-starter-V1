@@ -43,17 +43,17 @@ module.exports.deleteContact = async ({
 /**
  * Helper for generating tokens
  * @param {string} email
- * @param {string} chapter
- * @param {string} type account type like 'family' or 'admin'
+ * @param {string} objectType
+ * @param {string} type account type like 'user' or 'admin'
  */
 const generateToken = async ({
   email,
-  chapter,
+  objectType,
   type
 }) => {
   const payload = {
     email,
-    chapter,
+    objectType,
     type
   }
 
@@ -73,29 +73,29 @@ const generateToken = async ({
  * Sends a verification email to the user
  * @param {string} name The name of the recipient
  * @param {string} email The email of the recipient
- * @param {string} type The account type like 'family' or 'admin'
- * @param {string} chapter
+ * @param {string} type The account type like 'user' or 'admin'
+ * @param {string} objectType
  */
 module.exports.sendVerifyEmail = async ({
   name,
   email,
   type,
-  chapter
+  objectType
 }) => {
   const newEmail = new SibApiV3Sdk.SendSmtpEmail()
 
-  newEmail.subject = 'Thank you for signing up with Nouri'
+  newEmail.subject = 'Thank you for signing up.'
 
   newEmail.to = [{
     name,
     email,
     type,
-    chapter
+    objectType
   }]
 
   const token = await generateToken({
     email,
-    chapter,
+    objectType,
     type
   })
   const url = `${process.env.API_DOMAIN}/verify/${token}`
@@ -110,18 +110,18 @@ module.exports.sendVerifyEmail = async ({
   <body>
     <h2>Hello ${name}!</h2>
   
-    <p>Thank you for signing up with Nouri's ${chapter} chapter! Please verify your email by clicking below</p>
+    <p>Thank you for signing up! Please verify your email by clicking below</p>
     <a href="${url}"><button>Verify</button></a>
     <p>You can also copy this link and paste it in your browser: ${url}</p>
   
     <p>Best,</p>
-    <p>Team Nouri</p>
+    <p>team</p>
   </body>
   </html>`
 
   newEmail.sender = {
-    name: 'Team Nouri',
-    email: 'noreply@teamnouri.org'
+    name: 'team',
+    email: 'team'
   }
 
   try {
@@ -136,14 +136,14 @@ module.exports.sendVerifyEmail = async ({
  * Sends a reset email to the user
  * @param {string} name The name of the recipient
  * @param {string} email The email of the recipient
- * @param {string} type The account type like 'family' or 'admin'
- * @param {string} chapter
+ * @param {string} type The account type like 'user' or 'admin'
+ * @param {string} objectType
  */
 module.exports.sendResetEmail = async ({
   name,
   email,
   type,
-  chapter
+  objectType
 }) => {
   const newEmail = new SibApiV3Sdk.SendSmtpEmail()
 
@@ -153,12 +153,12 @@ module.exports.sendResetEmail = async ({
     name,
     email,
     type,
-    chapter
+    objectType
   }]
 
   const token = await generateToken({
     email,
-    chapter,
+    objectType,
     type
   })
   const url = `${process.env.API_DOMAIN}/reset/${token}`
@@ -173,18 +173,18 @@ module.exports.sendResetEmail = async ({
   <body>
     <h2>Hello ${name}!</h2>
   
-    <p>Here is the password reset link you requested. If you did not request this, please let the Nouri staff know.</p>
+    <p>Here is the password reset link you requested. If you did not request this, please let the staff know.</p>
     <a href="${url}"><button>Verify</button></a>
     <p>You can also copy this link and paste it in your browser: ${url}</p>
   
     <p>Best,</p>
-    <p>Team Nouri</p>
+    <p>Team</p>
   </body>
   </html>`
 
   newEmail.sender = {
-    name: 'Team Nouri',
-    email: 'noreply@teamnouri.org'
+    name: 'Team',
+    email: 'noreply'
   }
 
   try {
@@ -205,14 +205,14 @@ module.exports.verifyEmailToken = async ({
   try {
     const {
       email,
-      chapter,
+      objectType,
       type
     } = await jwt.verify(token, process.env.EMAIL_VERIFICATION_SECRET)
 
     return {
       data: {
         email,
-        chapter,
+        objectType,
         type
       }
     }
@@ -243,8 +243,8 @@ module.exports.sendTransEmail = async ({
   newEmail.subject = subject
   newEmail.htmlContent = htmlContent
   newEmail.sender = {
-    name: 'Team Nouri',
-    email: 'noreply@teamnouri.org'
+    name: 'Team',
+    email: 'noreply'
   }
   newEmail.to = [...emailList]
 

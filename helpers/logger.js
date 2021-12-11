@@ -14,7 +14,7 @@ module.exports = (sequenceName) => {
     sequence_name: sequenceName,
     step: null,
     userid: null,
-    chapter: null,
+    objectType: null,
     data: {}
   }
   const sequence = {}
