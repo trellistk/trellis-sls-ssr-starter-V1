@@ -51,7 +51,7 @@
     "sib-api-v3-sdk": "^8.2.1",
     "simple-sls-ssr": "^1.0.2",
     "utf-8-validate": "^5.0.5",
-    "validator": "^13.6.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "husky": "^4.3.8",
