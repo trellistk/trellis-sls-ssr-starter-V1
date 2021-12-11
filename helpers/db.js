@@ -130,6 +130,28 @@ module.exports.getFamily = async (chapter, docSort) => {
   }
 }
 
+module.exports.getLead = async (chapter, docSort) => {
+  const params = {
+    TableName,
+    Key: {
+      chapter,
+      docSort
+    }
+  }
+
+  try {
+    const leadInfo = await db.get(params).promise()
+
+    if (leadInfo.length === 0 || !leadInfo.Item || !leadInfo.Item.length === 0) {
+      return { error: 'Error finding record.' }
+    }
+
+    return { lead: leadInfo.Item }
+  } catch (error) {
+    return { error }
+  }
+}
+
 module.exports.addSession = async (chapter, docSort, token) => {
   try {
     const params = {

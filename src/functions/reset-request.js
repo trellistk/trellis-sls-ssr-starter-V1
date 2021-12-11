@@ -8,14 +8,14 @@ const getSecret = require('../../helpers/get-secret')
 const csrf = require('../../helpers/csrf')
 const { render } = require('simple-sls-ssr')
 
-const log = logger('SEQUENCE_SIGNUP_USER')
+const log = logger('SEQUENCE_RESET_REQUEST')
 
 /**
  * @description Signs up a new family. Does NOT handle admin accounts.
  * @param {*} event
  * @param {*} context
  */
-module.exports.signup = async (event, context) => {
+module.exports.resetRequest = async (event, context) => {
   const body = await qs.parse(event.body)
   log.info('STEP_EVENT_BODY_PARSED')
 
@@ -46,46 +46,31 @@ module.exports.signup = async (event, context) => {
 
   log.info('STEP_DECODE_JWT_COMPLETE')
 
-  const { error: dbErr } = await db.signUpFamily(body)
+  const chapter = body.chapter
+  const email = body.email
 
-  if (dbErr) {
-    if (dbErr.message === 'The conditional request failed') {
-      log.error('ERROR_USERNAME_EXISTS')
-      return await render('error', {
-        status_code: 403,
-        status_message: 'Forbidden',
-        details: 'Something went wrong.'
-      })
-    }
-    log.error('ERROR_CREATING_USER', { error: dbErr })
-    return await render('error', {
-      status_code: 400,
-      status_message: 'Forbidden',
-      details: 'Something went wrong.'
+  // Check family
+  const familySort = `family:${email}`
+  const { family, error: getFamilyError } = await db.getFamily(chapter, familySort)
+
+  if (family !== undefined && getFamilyError === undefined) {
+    // send the family an email reset email
+    const {
+      error: sendResetError
+    } = await emailHelper.sendResetEmail({
+      name: `${family.fname} ${family.lname}`,
+      email: family.email,
+      type: 'family',
+      chapter: family.chapter
     })
+
+    if (sendResetError) {
+    }
+    return await render('reset-request-success')
   }
 
-  log.info('SUCCESS_SIGNUP_USER_SEQUENCE')
+  // TODO check lead/admin info
 
-  // Send user the verification email
-  const {
-    error: emailError
-  } = await emailHelper.sendVerifyEmail({
-    name: `${body.fname} ${body.lname}`,
-    email: body.email,
-    type: 'family',
-    chapter: body.chapter
-  })
-
-  // Just log the error for now
-  if (emailError) {
-    log.info('ERROR_SENDING_VERIFICATION_EMAIL', { error: emailError })
-  }
-
-  log.info('STEP_EMAIL_SIGNUP_SUCCESS')
-
-  // Return a success page
-  return await render('signup-success', {
-    fname: body.fname
-  })
+  // Always return to the same succes page
+  return await render('reset-request-success')
 }

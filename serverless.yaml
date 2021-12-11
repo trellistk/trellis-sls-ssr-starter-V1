@@ -125,6 +125,37 @@ functions:
             passThrough: NEVER
             schema:
               application/json: "${file(src/schema/update_family_details.json)}"
+  resetRequestPage:
+    handler: src/functions/reset-request-page.resetRequestPage
+    events:
+      - http:
+          method: get
+          path: /reset/request
+          cors: true
+  resetRequest:
+    handler: src/functions/reset-request.resetRequest
+    events:
+      - http:
+          method: post
+          path: /reset/request
+          request:
+            passThrough: NEVER
+            schema:
+              application/json: "${file(src/schema/reset_request.json)}"
+  resetPage:
+    handler: src/functions/reset-page.resetPage
+    events:
+      - http:
+          method: get
+          path: /reset/{token}
+  resetPassword:
+    handler: src/functions/reset-password.resetPassword
+    events:
+      - http:
+          method: post
+          path: /reset
+
+
   authorizer:
     handler: src/functions/authorize.authorize
 

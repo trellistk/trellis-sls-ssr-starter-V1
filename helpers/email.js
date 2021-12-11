@@ -133,6 +133,69 @@ module.exports.sendVerifyEmail = async ({
 }
 
 /**
+ * Sends a reset email to the user
+ * @param {string} name The name of the recipient
+ * @param {string} email The email of the recipient
+ * @param {string} type The account type like 'family' or 'admin'
+ * @param {string} chapter
+ */
+module.exports.sendResetEmail = async ({
+  name,
+  email,
+  type,
+  chapter
+}) => {
+  const newEmail = new SibApiV3Sdk.SendSmtpEmail()
+
+  newEmail.subject = 'Here is your password reset link'
+
+  newEmail.to = [{
+    name,
+    email,
+    type,
+    chapter
+  }]
+
+  const token = await generateToken({
+    email,
+    chapter,
+    type
+  })
+  const url = `${process.env.API_DOMAIN}/reset/${token}`
+
+  newEmail.htmlContent = `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${newEmail.subject}</title>
+  </head>
+  <body>
+    <h2>Hello ${name}!</h2>
+  
+    <p>Here is the password reset link you requested. If you did not request this, please let the Nouri staff know.</p>
+    <a href="${url}"><button>Verify</button></a>
+    <p>You can also copy this link and paste it in your browser: ${url}</p>
+  
+    <p>Best,</p>
+    <p>Team Nouri</p>
+  </body>
+  </html>`
+
+  newEmail.sender = {
+    name: 'Team Nouri',
+    email: 'noreply@teamnouri.org'
+  }
+
+  try {
+    const res = await transEmailApi.sendTransacEmail(newEmail)
+    return { sib_msg_id: res.messageId }
+  } catch (error) {
+    return { error }
+  }
+}
+
+/**
  * @description Verify the email verification token
  * @param {string} token
  */
