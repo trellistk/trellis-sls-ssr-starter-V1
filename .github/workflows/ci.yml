@@ -19,7 +19,7 @@ jobs:
       - name: Install Serverless dependencies
         uses: serverless/github-action@master
         with:
-          args: dynamodb install --conceal
+          args: dynamodb install
 
       - name: Check lint
         run: npm run lint
