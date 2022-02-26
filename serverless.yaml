@@ -2,7 +2,7 @@ service: TRELLIS
 
 # Reference: https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
 
-frameworkVersion: "2"
+frameworkVersion: "3"
 
 plugins:
   - serverless-dynamodb-local
@@ -22,10 +22,10 @@ provider:
   runtime: nodejs14.x
   region: us-west-2
   environment:
-    DYNAMODB_TABLE: "${self:service}-${opt:stage, self:provider.stage}"
-    EMAIL_VERIFICATION_SECRET: ${env:EMAIL_VERIFICATION_SECRET}
-    SENDINBLUE_KEY: ${env:SENDINBLUE_KEY}
-    DOMAIN: ${env:DOMAIN}
+    DYNAMODB_TABLE: "${self:service}-${sls:stage}"
+    #EMAIL_VERIFICATION_SECRET: ${env:EMAIL_VERIFICATION_SECRET}
+    #SENDINBLUE_KEY: ${env:SENDINBLUE_KEY}
+    #DOMAIN: ${env:DOMAIN}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -73,7 +73,7 @@ functions:
           path: /signup
           request:
             passThrough: NEVER
-            schema:
+            schemas:
               application/json: "${file(src/schema/create_family.json)}"
   verifyEmail:
     handler: src/functions/verify-email.verifyEmail
@@ -96,7 +96,7 @@ functions:
           path: /login
           request:
             passThrough: NEVER
-            schema:
+            schemas:
               application/json: "${file(src/schema/login.json)}"
   logout:
     handler: src/functions/logout.logout
@@ -129,7 +129,7 @@ functions:
             type: request
           request:
             passThrough: NEVER
-            schema:
+            schemas:
               application/json: "${file(src/schema/update_family_details.json)}"
   resetRequestPage:
     handler: src/functions/reset-request-page.resetRequestPage
@@ -146,7 +146,7 @@ functions:
           path: /reset/request
           request:
             passThrough: NEVER
-            schema:
+            schemas:
               application/json: "${file(src/schema/reset_request.json)}"
   resetPage:
     handler: src/functions/reset-page.resetPage
