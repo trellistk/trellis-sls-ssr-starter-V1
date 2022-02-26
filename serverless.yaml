@@ -23,9 +23,6 @@ provider:
   region: us-west-2
   environment:
     DYNAMODB_TABLE: "${self:service}-${sls:stage}"
-    #EMAIL_VERIFICATION_SECRET: ${env:EMAIL_VERIFICATION_SECRET}
-    #SENDINBLUE_KEY: ${env:SENDINBLUE_KEY}
-    #DOMAIN: ${env:DOMAIN}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
