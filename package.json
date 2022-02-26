@@ -1,5 +1,5 @@
 {
-  "name": "nouri-serverless",
+  "name": "trellis-sls-ssr",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,8 @@
     "test:local": "tape 'src/tests/local/*.js'",
     "test:e2e": "tape 'src/tests/e2e/*.js'",
     "deploy:dev": "sls package --stage dev && sls deploy --package .serverless --stage dev --force",
-    "start:local": "IS_OFFLINE=true sls offline start"
+    "start:local": "IS_OFFLINE=true sls offline start",
+    "prepare": "husky install"
   },
   "standard": {
     "ignore": [
@@ -21,11 +22,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nourimeals/nouri-serverless.git"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "lint-staged": {
     "*.{js,jsx}": [
@@ -54,7 +50,7 @@
     "validator": "^13.7.0"
   },
   "devDependencies": {
-    "husky": "^7.0.4",
+    "husky": "^7.0.0",
     "lint-staged": "^12.3.4",
     "node-fetch": "^3.2.0",
     "puppeteer": "^13.4.0",
