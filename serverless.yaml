@@ -1,9 +1,8 @@
-service: NouriMeals-API
+service: TRELLIS
 
 # Reference: https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/
 
 frameworkVersion: "2"
-enableLocalinstallationFallback: true
 
 plugins:
   - serverless-dynamodb-local
@@ -20,7 +19,7 @@ custom:
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   region: us-west-2
   environment:
     DYNAMODB_TABLE: "${self:service}-${opt:stage, self:provider.stage}"
@@ -51,6 +50,12 @@ provider:
         - "arn:aws:ssm:us-west-2:274772592742:key/alias/aws/smm"
 
 functions:
+  index:
+    handler: src/functions/index.index
+    events:
+      - http:
+          method: get
+          path: /
   authorize:
     handler: src/functions/authorize.authorize
   signupPage:
@@ -107,7 +112,7 @@ functions:
           method: get
           path: /family
           cors: true
-          authorizer: 
+          authorizer:
             name: authorizer
             resultTtlInSeconds: 300
             type: request
@@ -118,7 +123,7 @@ functions:
           method: post
           cors: true
           path: /family
-          authorizer: 
+          authorizer:
             name: authorizer
             resultTtlInSeconds: 300
             type: request
@@ -156,7 +161,6 @@ functions:
           method: post
           path: /reset
 
-
   authorizer:
     handler: src/functions/authorize.authorize
 
@@ -168,15 +172,15 @@ resources:
       Properties:
         TableName: "${self:provider.environment.DYNAMODB_TABLE}"
         AttributeDefinitions:
-            - AttributeName: chapter
-              AttributeType: S
-            - AttributeName: docSort
-              AttributeType: S
+          - AttributeName: chapter
+            AttributeType: S
+          - AttributeName: docSort
+            AttributeType: S
         KeySchema:
-            - AttributeName: chapter
-              KeyType: HASH
-            - AttributeName: docSort
-              KeyType: RANGE
+          - AttributeName: chapter
+            KeyType: HASH
+          - AttributeName: docSort
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
