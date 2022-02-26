@@ -1,6 +1,6 @@
-# Nouri Serverless Application <!-- omit in toc -->
+# Trellis Serverless-Server Server-Side-Rendering Application <!-- omit in toc -->
 
-This project is to help us to manage family and delivery data.
+This project exists to quickly set up an SSR website using AWS lambda functions and dynamoDB.
 
 ## Table of Contents <!-- omit in toc -->
 
@@ -27,7 +27,7 @@ This project is to help us to manage family and delivery data.
 1. Clone the repo
    
    ```bash
-   git clone https://github.com/nourimeals/nouri-serverless.git
+   git clone https://github.com/trellistk/trellis-sls-ssr-starter.git
    ```
 
 2. Install the serverless CLI

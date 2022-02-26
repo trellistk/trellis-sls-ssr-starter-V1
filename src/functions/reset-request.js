@@ -20,7 +20,9 @@ module.exports.resetRequest = async (event, context) => {
   log.info('STEP_EVENT_BODY_PARSED')
 
   // Check csrf_token with no session.
-  const { error: getSecretErr } = await getSecret('/NouriServerless/jwtSecretKey/dev')
+  const { error: getSecretErr } = await getSecret(
+    '/NouriServerless/jwtSecretKey/dev'
+  )
   if (getSecretErr) {
     log.error('ERROR_RETRIEVING_SECRET_KEY', { error: getSecretErr })
 
@@ -51,13 +53,14 @@ module.exports.resetRequest = async (event, context) => {
 
   // Check family
   const familySort = `family:${email}`
-  const { family, error: getFamilyError } = await db.getFamily(chapter, familySort)
+  const { family, error: getFamilyError } = await db.getFamily(
+    chapter,
+    familySort
+  )
 
   if (family !== undefined && getFamilyError === undefined) {
     // send the family an email reset email
-    const {
-      error: sendResetError
-    } = await emailHelper.sendResetEmail({
+    const { error: sendResetError } = await emailHelper.sendResetEmail({
       name: `${family.fname} ${family.lname}`,
       email: family.email,
       type: 'family',
@@ -65,6 +68,7 @@ module.exports.resetRequest = async (event, context) => {
     })
 
     if (sendResetError) {
+      console.log(sendResetError)
     }
     return await render('reset-request-success')
   }
