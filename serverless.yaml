@@ -61,17 +61,6 @@ functions:
       - http:
           method: get
           path: /signup
-  signUp:
-    handler: src/functions/signup.signup
-    events:
-      - http:
-          method: post
-          cors: true
-          path: /signup
-          request:
-            passThrough: NEVER
-            schemas:
-              application/json: "${file(src/schema/create_family.json)}"
   verifyEmail:
     handler: src/functions/verify-email.verifyEmail
     events:
