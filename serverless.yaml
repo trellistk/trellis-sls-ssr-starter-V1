@@ -84,17 +84,6 @@ functions:
       - http:
           method: get
           path: /login
-  login:
-    handler: src/functions/login.login
-    events:
-      - http:
-          method: post
-          cors: true
-          path: /login
-          request:
-            passThrough: NEVER
-            schemas:
-              application/json: "${file(src/schema/login.json)}"
   logout:
     handler: src/functions/logout.logout
     events:
