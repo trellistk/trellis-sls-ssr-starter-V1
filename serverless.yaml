@@ -55,12 +55,6 @@ functions:
           path: /
   authorize:
     handler: src/functions/authorize.authorize
-  verifyEmail:
-    handler: src/functions/verify-email.verifyEmail
-    events:
-      - http:
-          method: get
-          path: /verify/{token}
   login:
     handler: src/functions/login.login
     events:
