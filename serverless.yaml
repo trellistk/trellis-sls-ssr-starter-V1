@@ -95,13 +95,7 @@ functions:
             passThrough: NEVER
             schemas:
               application/json: "${file(src/schema/login.json)}"
-  logout:
-    handler: src/functions/logout.logout
-    events:
-      - http:
-          method: get
-          cors: true
-          path: /logout
+
   familyPage:
     handler: src/functions/family-page.familyPage
     events:
