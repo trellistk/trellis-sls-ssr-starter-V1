@@ -55,23 +55,6 @@ functions:
           path: /
   authorize:
     handler: src/functions/authorize.authorize
-  verifyEmail:
-    handler: src/functions/verify-email.verifyEmail
-    events:
-      - http:
-          method: get
-          path: /verify/{token}
-  login:
-    handler: src/functions/login.login
-    events:
-      - http:
-          method: post
-          cors: true
-          path: /login
-          request:
-            passThrough: NEVER
-            schemas:
-              application/json: "${file(src/schema/login.json)}"
   logout:
     handler: src/functions/logout.logout
     events:
