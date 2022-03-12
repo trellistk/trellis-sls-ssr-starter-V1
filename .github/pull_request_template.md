@@ -24,9 +24,9 @@ title: '[Title]'
 - [ ] Local Tests are passing.
 - [ ] New tests have been added for new code.
 - [ ] JSDoc Documentation and comments have been added or updated in the code.
-- [ ] Documentation in the /docs folder has been added or updated when appropirate.
-- [ ] Follows Nouri JavaScript guidelines
-- [ ] Commit message follows Nouri guidelines
+- [ ] Documentation in the /docs folder has been added or updated when appropriate.
+- [ ] Follows Trellistk JavaScript guidelines
+- [ ] Commit message follows Trellistk guidelines
 - [ ] Introduces minimal or no additional external packages.
 
 
