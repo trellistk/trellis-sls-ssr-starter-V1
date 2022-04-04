@@ -55,13 +55,6 @@ functions:
           path: /
   authorize:
     handler: src/functions/authorize.authorize
-  logout:
-    handler: src/functions/logout.logout
-    events:
-      - http:
-          method: get
-          cors: true
-          path: /logout
   familyPage:
     handler: src/functions/family-page.familyPage
     events:
