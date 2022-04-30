@@ -62,32 +62,6 @@ functions:
           method: get
           cors: true
           path: /logout
-  familyPage:
-    handler: src/functions/family-page.familyPage
-    events:
-      - http:
-          method: get
-          path: /family
-          cors: true
-          authorizer:
-            name: authorizer
-            resultTtlInSeconds: 300
-            type: request
-  family:
-    handler: src/functions/family.family
-    events:
-      - http:
-          method: post
-          cors: true
-          path: /family
-          authorizer:
-            name: authorizer
-            resultTtlInSeconds: 300
-            type: request
-          request:
-            passThrough: NEVER
-            schemas:
-              application/json: "${file(src/schema/update_family_details.json)}"
   resetRequestPage:
     handler: src/functions/reset-request-page.resetRequestPage
     events:
