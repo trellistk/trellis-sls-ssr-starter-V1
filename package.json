@@ -55,7 +55,7 @@
     "node-fetch": "^3.2.0",
     "puppeteer": "^13.4.0",
     "serverless-dotenv-plugin": "^3.12.2",
-    "serverless-dynamodb-local": "^0.2.40",
+    "serverless-dynamodb-local": "^1.0.2",
     "serverless-offline": "^8.5.0",
     "standard": "^16.0.4",
     "tape": "^5.5.2"
